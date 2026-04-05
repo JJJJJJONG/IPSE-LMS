@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ title }} | {% trans 'Learning management system' %}{% endblock title %}
+
+{% load static %}
+
+{% block content %}
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'lecturer_list' %}">{% trans 'Lecturers' %}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{% trans 'Update' %}</li>
+    </ol>
+</nav>
+
+<div class="title-1"><i class="fas fa-cogs"></i>{% trans 'Lecturer Update Form' %}</div>
+<br>
+<br>
+
+{% include 'snippets/messages.html' %}
+
+<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card">
+                <p class="form-title">{% trans 'Email' %} &amp; {% trans 'Personal Info' %}</p>
+                <div class="card-body">
+                    {{ form.email }}
+                    {{ form.first_name }}
+                    {{ form.last_name }}
+                    {{ form.phone }}
+                    {{ form.address }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <p class="form-title">{% trans 'Others' %}</p>
+                <div class="card-body">
+                    {{ form.picture }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <input class="btn btn-primary" type="submit" value="{% trans 'Save' %}">
+</form>
+{% endblock content %}

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}회원가입 - IPSE AI Academy{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center py-10">
+    <div class="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row w-full max-w-5xl overflow-hidden border border-slate-200">
+
+        <div class="md:w-1/2 bg-slate-50 relative flex flex-col justify-center items-center p-12 overflow-hidden border-r border-slate-100">
+            
+            <div class="absolute inset-0 opacity-5 pointer-events-none">
+                <svg width="100%" height="100%"><rect width="100%" height="100%" fill="url(#grid)"/><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="1"/></pattern></defs></svg>
+            </div>
+
+            <div class="absolute left-4 top-0 h-full flex flex-col justify-around py-10 opacity-30 pointer-events-none">
+                <svg class="w-10 h-10 text-green-600 transform -rotate-45" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM8.917 11H6.971c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674zM15.917 11h-1.946c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674z" clip-rule="evenodd"></path></svg>
+                <svg class="w-8 h-8 text-green-700 transform -rotate-12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd"></path></svg>
+                <svg class="w-10 h-10 text-green-500 transform -rotate-45" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM8.917 11H6.971c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674zM15.917 11h-1.946c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674z" clip-rule="evenodd"></path></svg>
+            </div>
+            
+            <div class="absolute right-4 top-0 h-full flex flex-col justify-around py-10 opacity-30 transform scale-x-[-1] pointer-events-none">
+                <svg class="w-10 h-10 text-green-600 transform -rotate-45" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM8.917 11H6.971c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674zM15.917 11h-1.946c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674z" clip-rule="evenodd"></path></svg>
+                <svg class="w-8 h-8 text-green-700 transform -rotate-12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd"></path></svg>
+                <svg class="w-10 h-10 text-green-500 transform -rotate-45" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.951-2.847 2.361-3.628l-1.046-1.046a6.002 6.002 0 00-3.261 4.674zM8.917 11H6.971c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674zM15.917 11h-1.946c-.089 1.546-.951 2.847-2.361 3.628l1.046 1.046a6.002 6.002 0 003.261-4.674z" clip-rule="evenodd"></path></svg>
+            </div>
+
+            <div class="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-xl flex justify-center items-center mb-8 p-3">
+                <img src="/static/img/IPSE-LOGO.png" alt="IPSE 심볼" class="w-full h-full rounded-full logo-symbol object-cover">
+            </div>
+            
+            <p class="relative z-10 text-blue-600 font-medium tracking-widest text-center uppercase text-sm">
+                Join the Pioneer of Software Engineering
+            </p>
+        </div>
+
+        <div class="md:w-1/2 p-10 lg:p-16 flex flex-col justify-center">
+            <h1 class="text-4xl font-black text-slate-800 mb-2">Create Account</h1>
+            <p class="text-slate-500 font-medium mb-8">IPSE 동아리원이 되신걸 환영합니다.</p>
+
+            <form id="register-form" method="post" action="{% url 'register' %}" class="space-y-5">
+                {% csrf_token %}
+                
+               <div>
+    				<label for="id_username" class="block text-sm font-bold text-slate-700 mb-2">학번 (ID Number)</label>
+    
+    				<input type="text" name="username" id="id_username" required autofocus
+           				class="w-full px-5 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 focus:border-blue-500 focus:bg-white outline-none transition">
+    
+    					{% if form.username.errors or form.errors %}
+   				 	<div class="flex items-center text-red-500 text-xs font-bold mt-2 pl-1">
+       			 		<svg class="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            		<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+       			 		</svg>
+       					<span>이미 가입된 학번이거나 사용할 수 없는 형식입니다.</span>
+   				 	</div>
+   					{% endif %}
+				</div>
+
+                <div>
+                    <label for="id_email" class="block text-sm font-bold text-slate-700 mb-2">이메일 (Email)</label>
+                    <input type="email" name="email" id="id_email" required
+                           class="w-full px-5 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 focus:border-blue-500 focus:bg-white outline-none transition">
+                </div>
+                
+               <div>
+                    <label for="id_password1" class="block text-sm font-bold text-slate-700 mb-2">비밀번호</label>
+                    <div class="relative">
+                        <input type="password" name="password1" id="id_password1" required
+                               class="w-full px-5 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 focus:border-blue-500 focus:bg-white outline-none transition pr-12">
+                        <button type="button" onclick="togglePassword('id_password1', 'eye-icon-1')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-600 transition">
+                            <svg id="eye-icon-1" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_password_confirm" class="block text-sm font-bold text-slate-700 mb-2">비밀번호 확인</label>
+                    <div class="relative">
+                        <input type="password" name="password2" id="id_password_confirm" required
+                               class="w-full px-5 py-3 rounded-xl border-2 border-slate-100 bg-slate-50 focus:border-blue-500 focus:bg-white outline-none transition pr-12">
+                        <button type="button" onclick="togglePassword('id_password_confirm', 'eye-icon-2')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-600 transition">
+                            <svg id="eye-icon-2" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+                    <p id="password-error" class="text-red-500 text-xs font-bold mt-2 hidden">비밀번호가 일치하지 않습니다.</p>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg mt-4 opacity-50 cursor-not-allowed" disabled>
+                    SIGN UP
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm font-medium text-slate-600">
+                이미 계정이 있으신가요? <a href="{% url 'login' %}" class="text-blue-600 hover:underline">로그인하기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. 눈 모양 클릭 시 비밀번호 보이기/숨기기 토글 기능
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === "password") {
+            input.type = "text";
+            // 눈 감은 아이콘 SVG로 교체
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
+        } else {
+            input.type = "password";
+            // 눈 뜬 아이콘 SVG로 교체
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+        }
+    }
+
+    // 2. 실시간 비밀번호 일치 검사 로직
+    const pass1 = document.getElementById('id_password1');
+    const pass2 = document.getElementById('id_password_confirm');
+    const errorMsg = document.getElementById('password-error');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function validatePasswords() {
+        if (pass2.value === "") {
+            errorMsg.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            return;
+        }
+
+        if (pass1.value !== pass2.value) {
+            errorMsg.classList.remove('hidden'); // 경고 문구 표시
+            submitBtn.disabled = true;           // 가입 버튼 비활성화
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            errorMsg.classList.add('hidden');    // 경고 문구 숨김
+            submitBtn.disabled = false;          // 가입 버튼 활성화
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    // 사용자가 타자를 칠 때마다(input 이벤트) 검사 함수 실행
+    pass1.addEventListener('input', validatePasswords);
+    pass2.addEventListener('input', validatePasswords);
+</script>
+{% endblock %}

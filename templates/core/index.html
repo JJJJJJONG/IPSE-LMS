@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}대시보드{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-12 gap-8">
+        
+        <div class="col-span-12 lg:col-span-3 space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="h-20 bg-blue-600"></div>
+                <div class="px-6 pb-6">
+                    <div class="-mt-10 mb-4">
+                        <div class="w-20 h-20 bg-white rounded-2xl border-4 border-white shadow-md flex items-center justify-center overflow-hidden">
+                            <img src="/media/default.png" alt="profile" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800">{{ user.username }}</h3>
+                    <p class="text-sm text-slate-400 mb-4">학습을 시작한 지 12일째</p>
+                    
+                    <div class="grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
+                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">ALGO</p><p class="font-black text-blue-600">12</p></div>
+                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">POINTS</p><p class="font-black text-blue-600">450</p></div>
+                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">LEVEL</p><p class="font-black text-blue-600">11</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-800 mb-4">진행 중인 미션</h4>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1.5 font-bold">
+                            <span class="text-slate-600">파이썬 마스터리</span>
+                            <span class="text-blue-600">80%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-9 space-y-8">
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-black text-slate-800">타임라인</h2>
+                    <a href="#" class="text-xs font-bold text-blue-600 hover:underline">전체 보기</a>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-sm">
+                    {% if news_items %}
+                        {% for item in news_items %}
+                        <div class="p-5 flex items-start space-x-4 hover:bg-slate-50 transition">
+                            <div class="px-3 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase mt-1">
+                                {{ item.posted_as }}
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-slate-800">{{ item.title }}</h4>
+                                <p class="text-sm text-slate-500 mt-1">{{ item.summary }}</p>
+                                <span class="text-[10px] text-slate-400 mt-2 block">{{ item.updated_date|timesince }} 전</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-10 text-center text-slate-400 text-sm italic">등록된 공지사항이 없습니다.</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-black text-slate-800 mb-4">동아리 활동 피드</h2>
+                <div class="space-y-3">
+                    {% for log in activity_logs %}
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-bolt text-xs"></i>
+                        </div>
+                        <p class="text-sm text-slate-600 flex-grow">
+                            {{ log.message }}
+                        </p>
+                        <span class="text-[10px] text-slate-400 italic">{{ log.created_at|timesince }} 전</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

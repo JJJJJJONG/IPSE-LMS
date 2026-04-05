@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}강의 목록{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row gap-8">
+        
+        <aside class="w-full md:w-1/4">
+            <form method="GET" action="{% url 'course_list' %}" class="space-y-8 sticky top-24">
+                
+                <div>
+                    <h3 class="text-lg font-black text-slate-800 mb-3">강의 검색</h3>
+                    <div class="relative">
+                        <input type="text" name="q" value="{{ query }}" placeholder="강의 제목을 입력하세요" 
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-sm">
+                        <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-black text-slate-800">카테고리</h3>
+                        <a href="{% url 'course_list' %}" class="text-xs text-slate-400 hover:text-blue-600 transition"><i class="fa-solid fa-rotate-right mr-1"></i>초기화</a>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="radio" name="category" value="" {% if not selected_category %}checked{% endif %} onchange="this.form.submit()"
+                                   class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                            <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900">전체 보기</span>
+                        </label>
+
+                        {% for cat in categories %}
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="radio" name="category" value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}checked{% endif %} onchange="this.form.submit()"
+                                   class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                            <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900">{{ cat.title }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 transition md:hidden">검색 적용하기</button>
+            </form>
+        </aside>
+
+        <main class="w-full md:w-3/4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for course in courses %}
+                <a href="{{ course.get_absolute_url }}" class="group block bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition duration-300 flex flex-col h-full">
+                    
+                    <div class="relative h-40 {{ course.category.theme_color }} flex items-center justify-center p-6">
+                        <h4 class="text-white text-2xl font-black text-center opacity-90 group-hover:scale-105 transition transform duration-300">{{ course.title }}</h4>
+                        <div class="absolute top-4 right-4 text-white opacity-50 group-hover:opacity-100 transition">
+                            <i class="fa-solid fa-bookmark text-xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex-grow flex flex-col justify-between bg-white">
+                        <div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ course.category.title }}</span>
+                            <h3 class="text-lg font-bold text-slate-800 mt-1 mb-2 line-clamp-2">{{ course.title }}</h3>
+                        </div>
+                        
+                        <div class="border-t border-slate-100 pt-3 mt-4 flex justify-between items-center text-xs text-slate-500 font-semibold">
+                            <span><i class="fa-solid fa-user-tie mr-1"></i>{{ course.instructor.username|default:"운영진" }}</span>
+                            <span>보유 중</span>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="col-span-full py-20 text-center">
+                    <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-4"></i>
+                    <p class="text-slate-500 font-bold">조건에 맞는 강의가 없습니다.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}
