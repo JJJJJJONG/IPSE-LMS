@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}새 수업 작성 - IPSE AI Academy{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+
+<div class="max-w-5xl mx-auto px-4 py-12">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        
+        <div class="bg-slate-50 border-b border-slate-200 px-8 py-6">
+            <h1 class="text-2xl font-black text-slate-800">새 수업(Lesson) 작성</h1>
+            <p class="text-slate-500 text-sm mt-2 font-medium">마크다운 에디터를 활용하여 IPSE 부원들을 위한 고품질 강의를 작성해 주세요.</p>
+        </div>
+
+        <form id="lessonForm" method="POST" action="" class="p-8 space-y-8">
+            {% csrf_token %}
+            
+            <div>
+                <label for="title" class="block text-sm font-bold text-slate-700 mb-2">수업 제목 (Lesson)</label>
+                <input type="text" id="title" name="title" required placeholder="예: Linux 기초 명령어 모음"
+                       class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition font-medium text-slate-800">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">강의 본문 (Markdown 지원)</label>
+                
+                <div id="editor"></div>
+                
+                <input type="hidden" id="hiddenContent" name="content">
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 pt-4 border-t border-slate-100">
+                <button type="button" onclick="history.back()" class="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition">
+                    취소
+                </button>
+                <button type="submit" class="px-8 py-2.5 rounded-xl bg-indigo-600 text-white font-black hover:bg-indigo-700 transition shadow-md">
+                    강의 등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+    // 페이지가 열리면 Toast UI Editor 생성
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '600px',
+        initialEditType: 'markdown',
+        previewStyle: 'vertical',
+        placeholder: '이곳에 강의 내용을 자유롭게 작성해주세요...',
+    });
+
+    // 폼이 제출(Submit)될 때 실행되는 로직
+    document.getElementById('lessonForm').addEventListener('submit', function(e) {
+        // 에디터 안에 작성된 마크다운 텍스트를 추출
+        const markdownContent = editor.getMarkdown();
+        
+        // 숨겨진 input 창에 내용 삽입
+        document.getElementById('hiddenContent').value = markdownContent;
+        
+        // 만약 내용이 비어있다면 경고창 띄우고 전송 막기
+        if (!markdownContent.trim()) {
+            e.preventDefault();
+            alert('강의 본문을 작성해주세요!');
+        }
+    });
+</script>
+{% endblock %}

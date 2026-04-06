@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block navbar %}{% endblock %}
-{% block title %}로그인 - IPSE AI Academy{% endblock %}
 
 {% block content %}
 <div class="flex justify-center items-center py-10">
@@ -25,7 +26,7 @@
             </div>
 
             <div class="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-xl flex justify-center items-center mb-8 p-3">
-                <img src="/static/img/IPSE-LOGO.png" alt="IPSE 심볼" class="w-full h-full rounded-full logo-symbol object-cover">
+                <img src="{% static 'img/IPSE-LOGO.png' %}" alt="IPSE 심볼" class="w-full h-full rounded-full object-cover animate-[spin_20s_linear_infinite]">
             </div>
             
             <p class="relative z-10 text-blue-600 font-medium tracking-widest text-center uppercase text-sm">

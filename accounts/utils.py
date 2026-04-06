@@ -14,5 +14,3 @@ def generate_password(length=12):
     
     return password
 
-# 💡 ID 생성기나 이메일 스레딩은 현재 UI 기획과 맞지 않아 삭제했습니다.
-# 필요할 때 언제든 다시 'IPSE 스타일'로 깎아서 넣으면 되니까요!

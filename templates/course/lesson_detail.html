@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} - IPSE Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col relative">
+
+    <nav class="bg-white border-b border-slate-200 fixed top-0 w-full z-40 h-16 flex items-center justify-between px-6 shadow-sm">
+        <button class="text-slate-500 hover:text-slate-800 text-xl"><i class="fa-solid fa-bars"></i></button>
+        <div class="text-center">
+            <p class="text-xs font-bold text-slate-400"><i class="fa-solid fa-book mr-1"></i>{{ course.title }}</p>
+            <h1 class="text-sm font-black text-slate-800">{{ lesson.title }} <span id="page-indicator" class="text-indigo-500 ml-1"></span></h1>
+        </div>
+        <a href="{% url 'course_detail' course.slug %}" class="text-slate-400 hover:text-slate-800 text-2xl"><i class="fa-solid fa-xmark"></i></a>
+    </nav>
+
+    <div class="fixed top-16 w-full h-1.5 bg-slate-200 z-30">
+        <div class="h-1.5 bg-indigo-500 transition-all duration-500" style="width: {{ progress.progress_percentage }}%;"></div>
+    </div>
+
+    <main class="flex-grow pt-28 pb-32 px-4">
+        <article class="max-w-6xl mx-auto bg-white p-10 md:p-16 rounded-2xl border border-slate-200 shadow-sm min-h-[500px]">
+            
+            <textarea id="hidden-markdown" style="display: none;">{{ lesson.content }}</textarea>
+            
+            <div id="viewer" class="prose prose-slate max-w-none"></div>
+        </article>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 fixed bottom-0 w-full z-40 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            
+            <button id="btn-prev" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-lg transition text-sm hidden">
+                <i class="fa-solid fa-chevron-left mr-2"></i>이전 페이지
+            </button>
+            <div id="prev-spacer"></div>
+
+            <button id="btn-next" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg transition text-sm shadow-md">
+                다음 페이지<i class="fa-solid fa-chevron-right ml-2"></i>
+            </button>
+            <button id="btn-finish" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition text-sm shadow-md hidden">
+                <i class="fa-solid fa-flag-checkered mr-2"></i>학습 완료하기
+            </button>
+        </div>
+    </footer>
+
+    <div id="finishModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden text-center transform transition-all">
+            <div class="bg-indigo-50 py-8">
+                <i class="fa-solid fa-trophy text-6xl text-yellow-400 drop-shadow-md"></i>
+            </div>
+            <div class="p-8">
+                <h3 class="text-2xl font-black text-slate-800 mb-2">축하합니다!</h3>
+                <p class="text-slate-500 font-medium text-sm leading-relaxed mb-8">
+                    이 강의의 모든 페이지를 학습하셨습니다.<br>상세 페이지로 돌아가 진도율을 확인해보세요!
+                </p>
+                <a href="{% url 'course_detail' course.slug %}" class="block w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-md">
+                    상세 페이지로 돌아가기
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.js"></script>
+    <script>
+        // 1. textarea의 value 속성으로 마크다운을 가져오면 HTML 충돌이 발생하지 않습니다.
+        const rawContent = document.getElementById('hidden-markdown').value;
+        const pages = rawContent.split(/(?:^|\n)---\s*(?:\n|$)/);
+        const totalPages = pages.length;
+
+        // 2. 순수 뷰어 초기화
+        const viewer = new toastui.Editor({
+            el: document.querySelector('#viewer'),
+            initialValue: ''
+        });
+
+        // 3. UI 요소들 가져오기
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnFinish = document.getElementById('btn-finish');
+        const prevSpacer = document.getElementById('prev-spacer');
+        const pageIndicator = document.getElementById('page-indicator');
+        const finishModal = document.getElementById('finishModal');
+
+        // 4. 페이지 렌더링 함수
+        function renderPage() {
+            let currentPage = parseInt(window.location.hash.replace('#', '')) || 1;
+            
+            if (currentPage < 1 || currentPage > totalPages) {
+                currentPage = 1;
+                window.location.hash = '#1';
+            }
+
+            // 해당 페이지의 마크다운 내용만 뷰어에 렌더링
+            viewer.setMarkdown(pages[currentPage - 1]);
+            
+            if (totalPages > 1) {
+                pageIndicator.textContent = `(${currentPage}/${totalPages})`;
+            }
+
+            if (currentPage === 1) {
+                btnPrev.classList.add('hidden');
+                prevSpacer.classList.remove('hidden');
+            } else {
+                btnPrev.classList.remove('hidden');
+                prevSpacer.classList.add('hidden');
+            }
+
+            if (currentPage === totalPages) {
+                btnNext.classList.add('hidden');
+                btnFinish.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 5. 버튼 이벤트 리스너
+        btnPrev.addEventListener('click', () => {
+            let currentPage = parseInt(window.location.hash.replace('#', '')) || 1;
+            if (currentPage > 1) window.location.hash = '#' + (currentPage - 1);
+        });
+
+        btnNext.addEventListener('click', () => {
+            let currentPage = parseInt(window.location.hash.replace('#', '')) || 1;
+            if (currentPage < totalPages) window.location.hash = '#' + (currentPage + 1);
+        });
+
+        btnFinish.addEventListener('click', () => {
+            finishModal.classList.remove('hidden');
+        });
+
+        window.addEventListener('hashchange', renderPage);
+
+        if (!window.location.hash) {
+            window.location.hash = '#1';
+        } else {
+            renderPage();
+        }
+    </script>
+</body>
+</html>

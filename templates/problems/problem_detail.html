@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}{{ problem.title }} - IPSE AI Academy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
+    
+    <div class="flex-grow space-y-8 lg:w-2/3">
+        
+        <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-lg font-black text-slate-800">문제 설명</h2>
+                
+                <div class="relative group">
+                    <button class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center space-x-2 hover:bg-indigo-100 transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>문제 파일 받기 ({{ attachments|length }})</span>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                        {% for att in attachments %}
+                        <a href="{{ att.file.url }}" download class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b last:border-b-0">
+                            {{ att.filename }}
+                        </a>
+                        {% empty %}
+                        <span class="block px-4 py-2 text-sm text-slate-500">첨부파일이 없습니다.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="prose max-w-none text-slate-600 whitespace-pre-wrap">
+                {{ problem.description }}
+            </div>
+        </section>
+
+        <section class="bg-slate-100 p-8 rounded-2xl border border-dashed border-slate-300 flex items-center justify-center min-h-[150px]">
+            <span class="text-slate-400 font-bold text-xl tracking-widest uppercase">Tools Online Compiler (나중에 추가)</span>
+        </section>
+
+        <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-indigo-500">
+            <h3 class="text-indigo-600 font-bold mb-4 flex items-center space-x-2">
+                <i class="fa-regular fa-flag"></i>
+                <span>Flag 입력</span>
+            </h3>
+            
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-sm font-bold {% if message.tags == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="flex gap-4">
+                {% csrf_token %}
+                <input type="text" name="flag" placeholder="플래그 형식을 참고하여 정답을 입력해주세요" required
+                       class="flex-grow pl-4 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition text-sm">
+                <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-8 py-3 rounded-xl text-sm font-bold transition whitespace-nowrap">
+                    제출하기
+                </button>
+            </form>
+        </section>
+
+        <section class="space-y-4 pt-4">
+            <h2 class="text-2xl font-black text-slate-800">댓글</h2>
+            
+            <div class="space-y-6">
+                {% for comment in comments %}
+                <div class="border-b border-slate-100 pb-4">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-6 h-6 rounded-full bg-slate-200"></div>
+                        <span class="font-bold text-sm text-slate-700">{{ comment.author.username }}</span>
+                        <span class="text-xs text-slate-400">{{ comment.created_at|date:"Y.m.d. H:i" }}</span>
+                    </div>
+                    <p class="text-sm text-slate-600">{{ comment.content }}</p>
+                </div>
+                {% empty %}
+                <p class="text-sm text-slate-400">아직 등록된 댓글이 없습니다.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <aside class="w-full lg:w-1/3 space-y-6">
+        
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">{{ problem.difficulty }}</span>
+                <span class="text-indigo-500 font-bold text-sm">LEVEL {{ problem.difficulty }}</span>
+            </div>
+            
+            <h1 class="text-2xl font-black text-slate-800 mb-4">{{ problem.title }}</h1>
+            
+            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">{{ problem.category.title }}</span>
+            
+            <div class="mt-6 flex items-center text-xs text-slate-400 space-x-4">
+                <span class="flex items-center space-x-1"><i class="fa-regular fa-eye"></i> <span>124</span></span>
+                <span class="flex items-center space-x-1"><i class="fa-regular fa-flag"></i> <span>{{ solvers_count }}</span></span>
+                <span class="flex items-center space-x-1"><i class="fa-regular fa-calendar"></i> <span>{{ problem.created_at|date:"Y.m.d. H:i:s" }}</span></span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-800 mb-4">출제자 정보</h3>
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden"></div>
+                <div>
+                    <p class="font-bold text-sm text-slate-700">{{ problem.author.username }}</p>
+                    <p class="text-xs text-slate-400">아직 자기소개가 없습니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-red-500 mb-4 flex items-center space-x-2">
+                <i class="fa-regular fa-flag"></i>
+                <span>First Blood!</span>
+            </h3>
+            {% if first_blood %}
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden"></div>
+                <div>
+                    <p class="font-bold text-sm text-slate-700">{{ first_blood.user.username }}</p>
+                    <p class="text-xs text-slate-400">가장 먼저 문제를 해결했습니다!</p>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-400">아직 문제를 푼 사람이 없습니다. 첫 번째의 주인공이 되어보세요!</p>
+            {% endif %}
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-sm font-bold text-slate-800">최근 풀이자 <span class="text-indigo-500">{{ solvers_count }}</span></h3>
+            </div>
+            <div class="space-y-4">
+                {% for record in recent_solvers %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+                        <span class="text-sm font-bold text-slate-700">{{ record.user.username }}</span>
+                    </div>
+                    <span class="text-xs text-slate-400">{{ record.solved_at|timesince }} 전</span>
+                </div>
+                {% empty %}
+                <p class="text-xs text-slate-400">최근 풀이자가 없습니다.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </aside>
+</div>
+{% endblock %}

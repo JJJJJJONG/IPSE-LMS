@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
+
+    <div class="flex-grow space-y-8">
+
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="space-y-6">
+
+                <form method="GET" action="{% url 'problem_list' %}" class="relative">
+                    <input type="hidden" name="category" value="{{ current_category|default:'' }}">
+                    <input type="hidden" name="difficulty" value="{{ current_difficulty|default:'' }}">
+                    <input type="hidden" name="sort" value="{{ current_sort|default:'newest' }}">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400"></i>
+                    <input type="text" name="q" value="{{ current_q|default:'' }}" placeholder="찾고 싶은 문제를 검색하세요."
+                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none transition">
+                </form>
+
+                <div class="flex items-center space-x-4 overflow-x-auto pb-2">
+                    <span class="text-sm font-bold text-slate-500 shrink-0">분야</span>
+
+                    <a href="?q={{ current_q|default:'' }}&difficulty={{ current_difficulty|default:'' }}&sort={{ current_sort|default:'newest' }}"
+                        class="px-4 py-1.5 rounded-full border text-sm font-bold transition whitespace-nowrap
+                              {% if not current_category %} bg-blue-600 text-white border-blue-600 
+                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        모든 분야
+                    </a>
+
+                    {% for cat in categories %}
+                    <a href="?category={{ cat.id }}&q={{ current_q|default:'' }}&difficulty={{ current_difficulty|default:'' }}&sort={{ current_sort|default:'newest' }}"
+                        class="px-4 py-1.5 rounded-full border text-sm font-bold transition whitespace-nowrap
+                              {% if current_category == cat.id|stringformat:'s' %} bg-blue-600 text-white border-blue-600 
+                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        {{ cat.title }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-bold text-slate-500 mr-2">난이도</span>
+
+                    <a href="?q={{ current_q|default:'' }}&category={{ current_category|default:'' }}&sort={{ current_sort|default:'newest' }}"
+                        class="px-3 py-1 rounded-full border text-xs font-bold transition
+                              {% if not current_difficulty %} bg-blue-100 text-blue-600 border-blue-200
+                              {% else %} bg-white text-slate-500 border-slate-200 hover:border-blue-500 {% endif %}">
+                        전체
+                    </a>
+
+                    {% for i in "1234567890" %}
+                    <a href="?difficulty={{ forloop.counter }}&q={{ current_q|default:'' }}&category={{ current_category|default:'' }}&sort={{ current_sort|default:'newest' }}"
+                        class="w-8 h-8 flex items-center justify-center rounded-full border text-xs font-bold transition
+                              {% if current_difficulty == forloop.counter|stringformat:'s' %} bg-blue-600 text-white border-blue-600
+                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        {{ forloop.counter }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <div class="flex justify-between items-center px-2">
+            <span class="text-sm font-medium text-slate-500">
+                총 <span class="font-bold text-blue-600">{{ problems|length }}</span>개의 문제가 있습니다.
+            </span>
+
+            <form method="GET" action="{% url 'problem_list' %}" class="flex items-center">
+                <input type="hidden" name="q" value="{{ current_q|default:'' }}">
+                <input type="hidden" name="category" value="{{ current_category|default:'' }}">
+                <input type="hidden" name="difficulty" value="{{ current_difficulty|default:'' }}">
+
+                <select name="sort" onchange="this.form.submit()"
+                    class="text-sm font-bold border-slate-200 rounded-lg text-slate-600 focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 shadow-sm cursor-pointer outline-none transition">
+                    <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>최신순</option>
+                    <option value="most_solved" {% if current_sort == 'most_solved' %}selected{% endif %}>풀이자 많은 순
+                    </option>
+                    <option value="least_solved" {% if current_sort == 'least_solved' %}selected{% endif %}>풀이자 적은 순
+                    </option>
+                </select>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <table class="w-full text-left">
+                <thead
+                    class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-black uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4">문제 정보</th>
+                        <th class="px-6 py-4 text-center">분야</th>
+                        <th class="px-6 py-4 text-center">풀이 수</th>
+                        <th class="px-6 py-4 text-center">출제자</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for problem in problems %}
+                    <tr class="hover:bg-slate-50 transition cursor-pointer group"
+                        onclick="location.href='{{ problem.get_absolute_url }}'">
+                
+                        <td class="px-6 py-5">
+                            <div class="flex items-center space-x-3">
+                                <span
+                                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                    {{ problem.difficulty }}
+                                </span>
+                
+                                <span class="font-bold text-slate-800 group-hover:text-blue-600 transition">
+                                    {{ problem.title }}
+                                </span>
+                            </div>
+                        </td>
+                
+                        <td class="px-6 py-5 text-center">
+                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">
+                                {{ problem.category.title }}
+                            </span>
+                        </td>
+                
+                        <td class="px-6 py-5 text-center font-bold text-slate-600">
+                            {{ problem.solve_count|default:"0" }}
+                        </td>
+                
+                        <td class="px-6 py-5 text-center text-sm font-medium text-slate-500">
+                            {{ problem.author.username }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-10 text-center text-slate-500 font-medium">
+                            조건에 맞는 문제가 없습니다.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<aside class="w-full lg:w-80 space-y-6">
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="text-lg font-black text-slate-800 mb-6">IPSE 실시간 랭킹</h3>
+        <div class="space-y-5">
+            {% for ranker in top_rankers %}
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span
+                        class="text-xs font-black {% if forloop.counter <= 3 %}text-blue-600{% else %}text-slate-400{% endif %}">
+                        {{forloop.counter }}
+                    </span>
+                    <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+                    </div>
+                    <span class="text-sm font-bold text-slate-700">{{ ranker.username }}</span>
+                </div>
+                <span class="text-sm font-black text-blue-600">{{ ranker.total_points }}</span>
+            </div>
+            {% empty %}
+            <p class="text-sm text-slate-500 text-center">아직 랭킹 데이터가 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+</aside>
+</div>
+{% endblock %}

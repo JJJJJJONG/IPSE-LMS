@@ -82,16 +82,55 @@ pre_save.connect(video_pre_save_receiver, sender=UploadVideo)
 # 5. [신규] 동아리원 진도율 추적 모델
 # ==========================================
 class UserCourseProgress(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='progresses', verbose_name="동아리원")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='progresses', verbose_name="강의")
-    is_completed = models.BooleanField(default=False, verbose_name="수강 완료 여부")
-    progress_percentage = models.IntegerField(default=0, verbose_name="진도율(%)")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="최근 수강일")
+    # 🚨 'User' 대신 'settings.AUTH_USER_MODEL'을 사용하여 커스텀 유저와 연결합니다.
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    completed_lessons = models.ManyToManyField('Lesson', blank=True)
+    
+    @property
+    def progress_percentage(self):
+        total_lessons = self.course.lessons.count()
+        if total_lessons == 0:
+            return 0
+        # 🚨 완료된 수업 수 / 전체 수업 수 * 100
+        return int((self.completed_lessons.count() / total_lessons) * 100)
 
     class Meta:
+
         unique_together = ('user', 'course')
-        verbose_name = "동아리원 수강 진도"
-        verbose_name_plural = "동아리원 수강 진도 목록"
+
+# ==========================================
+# 6. [신규] 강의 단원과 수업 모델
+# ==========================================
+class Unit(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='units', verbose_name="소속 강의")
+    title = models.CharField(max_length=200, verbose_name="단원명 (예: SECCOMP)")
+    order = models.IntegerField(default=0, verbose_name="정렬 순서")
+
+    class Meta:
+        ordering = ['order']
 
     def __str__(self):
-        return f"{self.user.username} - {self.course.title} ({self.progress_percentage}%)"
+        return self.title
+
+
+# ==========================================
+# 7. [신규] 강의 수업 모델 (Lesson과 Course연결)
+# ==========================================
+class Lesson(models.Model):
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons', verbose_name="소속 강의")
+    title = models.CharField(max_length=200, verbose_name="수업명 (예: Background: SECCOMP)")
+    content = models.TextField(verbose_name="강의 내용 (HTML/Markdown)")
+    order = models.IntegerField(default=0, verbose_name="정렬 순서")
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.title
+        
+    def get_absolute_url(self):
+        # 🚨 self.unit.course.slug 대신 self.course.slug 로 단축
+        return reverse("lesson_detail", kwargs={"course_slug": self.course.slug, "lesson_pk": self.pk})
+

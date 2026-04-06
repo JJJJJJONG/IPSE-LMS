@@ -30,26 +30,19 @@ class CustomUserManager(UserManager):
 GENDERS = ((_("M"), _("Male")), (_("F"), _("Female")))
 
 class User(AbstractUser):
-    """
-    IPSE의 통합 유저 모델
-    - first_name, last_name의 필수 조건을 해제하여 가입 절차를 간소화함
-    """
+    
     is_student = models.BooleanField(default=False)
     is_lecturer = models.BooleanField(default=False)
-    
-    # 🚨 핵심 수정: null=True, blank=True를 추가하여 DB 제약 조건을 해제합니다.
     first_name = models.CharField(_("first name"), max_length=150, blank=True, null=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True, null=True)
-    
     gender = models.CharField(max_length=1, choices=GENDERS, blank=True, null=True)
     phone = models.CharField(max_length=60, blank=True, null=True)
     address = models.CharField(max_length=60, blank=True, null=True)
     picture = models.ImageField(upload_to="profile_pictures/%y/%m/%d/", default="default.png", null=True)
     email = models.EmailField(blank=True, null=True)
-
     username_validator = ASCIIUsernameValidator()
     objects = CustomUserManager()
-
+    total_points = models.IntegerField(default=0, verbose_name="누적 포인트")
     class Meta:
         ordering = ("-date_joined",)
 

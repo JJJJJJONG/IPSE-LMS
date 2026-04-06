@@ -137,3 +137,6 @@ cython_debug/
 # Cursor  
 .cursorignore
 .cursorindexingignore
+
+# IPSE LMS Media files (유저 업로드 썸네일, 영상, 자료 등)
+media/

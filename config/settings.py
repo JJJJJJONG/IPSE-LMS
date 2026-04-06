@@ -41,8 +41,13 @@ PROJECT_APPS = [
     "quiz.apps.QuizConfig",
 ]
 
+PROBLEMS = [
+    "problems.apps.ProblemsConfig",
+]
+
+
 # Combine all apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + PROBLEMS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -53,7 +58,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # locale(다국어 번역) 미들웨어 삭제 완료
 ]
 
 ROOT_URLCONF = "config.urls"

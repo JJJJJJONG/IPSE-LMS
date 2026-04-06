@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50 border-b border-slate-200 pt-10 pb-10">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center space-x-3 mb-4">
+            <span class="px-3 py-1 text-xs font-black text-white rounded-full {{ course.category.theme_color }}">
+                {{ course.category.title }}
+            </span>
+            <span class="text-sm font-bold text-slate-500">코드: {{ course.code }}</span>
+        </div>
+
+        <p class="text-slate-600 flex items-center">
+            <i class="fa-solid fa-user-tie mr-2 text-slate-400"></i>
+            담당 멘토: <span class="font-bold ml-1">{{ course.instructor.username|default:"IPSE 운영진" }}</span>
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex flex-col lg:flex-row gap-10">
+        
+        <div class="w-full lg:w-2/3 space-y-12">
+            
+            <section>
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                    <h2 class="text-xl font-black text-slate-800">과정 소개</h2>
+                    {% if user.is_staff %}
+                    <button id="toggle-summary-btn" class="px-3 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold text-xs rounded-lg transition shadow-sm">
+                        편집
+                    </button>
+                    {% endif %}
+                </div>
+                
+                <div id="summary-view" class="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
+                    {{ course.summary|default:"등록된 강의 설명이 없습니다." }}
+                </div>
+
+                {% if user.is_staff %}
+                <form id="summary-form" action="{% url 'course_update_summary' course.id %}" method="POST" class="hidden">
+                    {% csrf_token %}
+                    <textarea name="summary" rows="5" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-700 font-medium resize-none">{{ course.summary }}</textarea>
+                    <div class="flex justify-end space-x-2 mt-3">
+                        <button type="button" id="cancel-summary-btn" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-300 transition">취소</button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg hover:bg-indigo-700 transition shadow-sm">저장하기</button>
+                    </div>
+                </form>
+                {% endif %}
+            </section>
+
+            <section>
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                    <h2 class="text-xl font-black text-slate-800">커리큘럼 구성</h2>
+                    
+                    {% if user.is_staff %}
+                    <button id="toggle-curriculum-btn" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold text-sm rounded-lg transition shadow-sm">
+                        편집
+                    </button>
+                    {% endif %}
+                </div>
+                
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <ul class="divide-y divide-slate-100">
+                        {% for lesson in course.lessons.all %}
+                        <li class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition group">
+                            
+                            <div class="flex items-center">
+                                {% if user.is_staff %}
+                                <form action="{% url 'lesson_delete' lesson.id %}" method="POST" class="delete-lesson-form hidden mr-3" onsubmit="return confirm('정말 이 수업을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-md w-7 h-7 flex items-center justify-center font-bold transition">
+                                        <i class="fa-solid fa-minus text-sm"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                <div class="flex items-center space-x-3 text-slate-700 font-medium">
+                                    <i class="fa-regular fa-file-lines text-slate-400"></i>
+                                    <span>{{ lesson.title }}</span>
+                                </div>
+                            </div>
+    
+                             {% if lesson.id in completed_lesson_ids %}
+                            <span class="text-sm font-bold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full">
+                                <i class="fa-solid fa-check mr-1"></i>완료
+                            </span>
+                            {% else %}
+                            <a href="{{ lesson.get_absolute_url }}" class="text-sm font-bold text-indigo-500 opacity-0 group-hover:opacity-100 transition">
+                                시작하기
+                            </a>
+                            {% endif %}
+                        </li>
+                        {% empty %}
+                        <li class="px-6 py-10 text-center text-sm text-slate-400 font-medium">아직 등록된 수업이 없습니다.</li>
+                        {% endfor %}
+
+                        {% if user.is_staff %}
+                        <li id="add-lesson-row" class="hidden px-6 py-4 bg-slate-50/50">
+                            <a href="{% url 'lesson_create' course.slug %}" class="flex items-center justify-center w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition">
+                                <i class="fa-solid fa-plus mr-2"></i>새 수업 추가하기
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <aside class="w-full lg:w-80 space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
+                <div class="text-5xl font-black text-slate-800 mb-2">{{ progress.progress_percentage }}%</div>
+                <p class="text-sm font-bold text-slate-500 mb-6">진행률</p>
+                
+                <div class="w-full bg-slate-100 rounded-full h-3 mb-6 overflow-hidden">
+                    <div class="bg-indigo-600 h-3 rounded-full transition-all duration-1000" style="width: {{ progress.progress_percentage }}%;"></div>
+                </div>
+                
+                {% if next_lesson %}
+                    <a href="{{ next_lesson.get_absolute_url }}" class="block w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition shadow-md">
+                        {% if progress.progress_percentage == 0 %}
+                            학습 시작하기
+                        {% elif progress.progress_percentage == 100 %}
+                            처음부터 복습하기
+                        {% else %}
+                            이어서 학습하기
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <button disabled class="block w-full py-3.5 bg-slate-200 text-slate-500 font-bold rounded-xl shadow-sm cursor-not-allowed">
+                        등록된 수업이 없습니다
+                    </button>
+                {% endif %}
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                <ul class="space-y-5 text-sm font-medium">
+                    <li class="flex justify-between items-center">
+                        <span class="text-slate-500"><i class="fa-solid fa-video w-5 text-center mr-2"></i>강의 수</span>
+                        <span class="font-bold text-slate-800">{{ course.lessons.count }}개</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <span class="text-slate-500"><i class="fa-solid fa-file-arrow-down w-5 text-center mr-2"></i>실습 자료</span>
+                        <span class="font-bold text-slate-800">{{ files.count }}개</span>
+                    </li>
+                    <li class="flex justify-between items-center pt-5 border-t border-slate-100">
+                        <span class="text-slate-500"><i class="fa-regular fa-clock w-5 text-center mr-2"></i>수강 기한</span>
+                        <span class="font-bold text-slate-800">무제한</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. 과정 소개 편집 토글 로직
+    const toggleSummaryBtn = document.getElementById('toggle-summary-btn');
+    const summaryView = document.getElementById('summary-view');
+    const summaryForm = document.getElementById('summary-form');
+    const cancelSummaryBtn = document.getElementById('cancel-summary-btn');
+
+    if (toggleSummaryBtn) {
+        toggleSummaryBtn.addEventListener('click', function() {
+            summaryView.classList.add('hidden');
+            summaryForm.classList.remove('hidden');
+            toggleSummaryBtn.classList.add('hidden'); // 편집 중엔 상단 버튼 숨기기
+        });
+
+        cancelSummaryBtn.addEventListener('click', function() {
+            summaryForm.classList.add('hidden');
+            summaryView.classList.remove('hidden');
+            toggleSummaryBtn.classList.remove('hidden');
+        });
+    }
+
+    // 2. 커리큘럼 삭제(X) 버튼 토글 로직
+    // 2. 커리큘럼 삭제 및 추가 버튼 토글 로직
+    const toggleCurriculumBtn = document.getElementById('toggle-curriculum-btn');
+    const deleteForms = document.querySelectorAll('.delete-lesson-form');
+    const addLessonRow = document.getElementById('add-lesson-row'); // 추가 버튼 행 선택
+
+    if (toggleCurriculumBtn) {
+        toggleCurriculumBtn.addEventListener('click', function() {
+            let isEditing = false;
+
+            // 기존 강의들의 삭제 폼 토글
+            deleteForms.forEach(form => {
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) {
+                    isEditing = true;
+                }
+            });
+
+            // 편집 상태에 맞춰 하단 수업 추가 버튼 표시/숨김
+            if (addLessonRow) {
+                if (isEditing) {
+                    addLessonRow.classList.remove('hidden');
+                } else {
+                    addLessonRow.classList.add('hidden');
+                }
+            }
+
+            // 버튼 스타일 및 텍스트 변경
+            if (isEditing) {
+                this.innerText = '완료';
+                this.classList.replace('bg-slate-100', 'bg-indigo-100');
+                this.classList.replace('text-slate-600', 'text-indigo-700');
+            } else {
+                this.innerText = '편집';
+                this.classList.replace('bg-indigo-100', 'bg-slate-100');
+                this.classList.replace('text-indigo-700', 'text-slate-600');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}
