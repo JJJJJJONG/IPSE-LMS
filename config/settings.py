@@ -39,15 +39,13 @@ PROJECT_APPS = [
     "result.apps.ResultConfig",
     "search.apps.SearchConfig",
     "quiz.apps.QuizConfig",
-]
-
-PROBLEMS = [
     "problems.apps.ProblemsConfig",
+    "community.apps.CommunityConfig",
 ]
 
 
 # Combine all apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + PROBLEMS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

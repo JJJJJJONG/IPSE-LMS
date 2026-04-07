@@ -1,90 +1,576 @@
 {% extends 'base.html' %}
-{% block title %}대시보드{% endblock %}
+{% block title %}IPSE 대시보드{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
-    <div class="grid grid-cols-12 gap-8">
+<div class="bg-slate-50 min-h-screen py-10">
+    <div class="max-w-7xl mx-auto px-4">
         
-        <div class="col-span-12 lg:col-span-3 space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="h-20 bg-blue-600"></div>
-                <div class="px-6 pb-6">
-                    <div class="-mt-10 mb-4">
-                        <div class="w-20 h-20 bg-white rounded-2xl border-4 border-white shadow-md flex items-center justify-center overflow-hidden">
-                            <img src="/media/default.png" alt="profile" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-black text-slate-800">{{ user.username }}</h3>
-                    <p class="text-sm text-slate-400 mb-4">학습을 시작한 지 12일째</p>
-                    
-                    <div class="grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
-                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">ALGO</p><p class="font-black text-blue-600">12</p></div>
-                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">POINTS</p><p class="font-black text-blue-600">450</p></div>
-                        <div><p class="text-[10px] text-slate-400 uppercase font-bold">LEVEL</p><p class="font-black text-blue-600">11</p></div>
-                    </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h4 class="text-sm font-bold text-slate-800 mb-4">진행 중인 미션</h4>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-xs mb-1.5 font-bold">
-                            <span class="text-slate-600">파이썬 마스터리</span>
-                            <span class="text-blue-600">80%</span>
-                        </div>
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                            <div class="bg-blue-600 h-full" style="width: 80%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-span-12 lg:col-span-9 space-y-8">
-            <section>
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-black text-slate-800">타임라인</h2>
-                    <a href="#" class="text-xs font-bold text-blue-600 hover:underline">전체 보기</a>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-sm">
-                    {% if news_items %}
-                        {% for item in news_items %}
-                        <div class="p-5 flex items-start space-x-4 hover:bg-slate-50 transition">
-                            <div class="px-3 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase mt-1">
-                                {{ item.posted_as }}
+            <div class="space-y-8">
+                
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
+                    <div class="h-24 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+                    <div class="px-6 pb-6 relative">
+                        <div class="flex justify-between items-end -mt-12 mb-4 px-6 relative z-10">
+                            <div class="relative group cursor-pointer w-24 h-24 rounded-full border-4 border-white shadow-md bg-white flex-shrink-0" id="profile-image-container">
+                                <img src="{{ request.user.get_picture }}" alt="Profile" id="profile-image-display" class="w-full h-full rounded-full object-cover">
+                                <div class="absolute inset-0 bg-slate-900/50 rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-200" id="profile-upload-trigger">
+                                    <i class="fa-solid fa-camera text-white text-xl"></i>
+                                </div>
+                                <button type="button" id="profile-delete-btn" class="absolute top-0 right-0 bg-slate-600 hover:bg-rose-500 text-white rounded-full w-7 h-7 flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-200 shadow-sm z-20">
+                                    <i class="fa-solid fa-xmark text-sm"></i>
+                                </button>
+                                <input type="file" id="profile-image-input" class="hidden" accept="image/png, image/jpeg, image/jpg">
                             </div>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-slate-800">{{ item.title }}</h4>
-                                <p class="text-sm text-slate-500 mt-1">{{ item.summary }}</p>
-                                <span class="text-[10px] text-slate-400 mt-2 block">{{ item.updated_date|timesince }} 전</span>
-                            </div>
+                            <a href="#" id="open-modal-btn" class="px-4 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition shadow-sm mb-2">
+                                프로필 커스텀
+                            </a>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="p-10 text-center text-slate-400 text-sm italic">등록된 공지사항이 없습니다.</div>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section>
-                <h2 class="text-lg font-black text-slate-800 mb-4">동아리 활동 피드</h2>
-                <div class="space-y-3">
-                    {% for log in activity_logs %}
-                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                            <i class="fa-solid fa-bolt text-xs"></i>
-                        </div>
-                        <p class="text-sm text-slate-600 flex-grow">
-                            {{ log.message }}
+                        <h3 class="text-xl font-black text-slate-800">{{ request.user.username }}</h3>
+                        <p class="text-sm text-slate-500 font-medium mt-1">
+                            {% if request.user.student and request.user.student.bio %}
+                                {{ request.user.student.bio }}
+                            {% else %}
+                                아직 한 줄 소개가 없습니다. 프로필을 완성해보세요!
+                            {% endif %}
                         </p>
-                        <span class="text-[10px] text-slate-400 italic">{{ log.created_at|timesince }} 전</span>
+                        <div class="flex space-x-3 mt-4">
+                            {% if request.user.student and request.user.student.github_url %}
+                            <a href="{{ request.user.student.github_url }}" target="_blank" class="text-slate-400 hover:text-slate-800 transition">
+                                <i class="fa-brands fa-github text-lg"></i>
+                            </a>
+                            {% endif %}
+                            {% if request.user.student and request.user.student.blog_url %}
+                            <a href="{{ request.user.student.blog_url }}" target="_blank" class="text-slate-400 hover:text-blue-500 transition">
+                                <i class="fa-solid fa-link text-lg"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center justify-between mt-6 pt-5 border-t border-slate-100 text-center">
+                            <div class="flex-1">
+                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">LEVEL</p>
+                                <p class="text-xl font-black text-indigo-600">
+                                    {% if request.user.student %}{{ request.user.student.level }}{% else %}1{% endif %}
+                                </p>
+                            </div>
+                            <div class="w-px h-8 bg-slate-100"></div>
+                            <div class="flex-1">
+                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">POINTS</p>
+                                <p class="text-xl font-black text-slate-700">{{ request.user.total_points|default:"0" }}</p>
+                            </div>
+                            <div class="w-px h-8 bg-slate-100"></div>
+                            <div class="flex-1">
+                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">ALGO</p>
+                                <p class="text-xl font-black text-slate-700">0</p>
+                            </div>
+                        </div>
                     </div>
-                    {% endfor %}
                 </div>
-            </section>
+
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-black text-slate-800">동아리 일정</h3>
+                        <div class="flex space-x-3 text-xs font-bold">
+                            <span class="flex items-center text-emerald-600">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></div>공식
+                            </span>
+                            <span class="flex items-center text-purple-600">
+                                <div class="w-2 h-2 rounded-full bg-purple-500 mr-1.5"></div>개인
+                            </span>
+                        </div>
+                    </div>
+                    <div id="calendar" class="min-h-[400px]"></div>
+                </div>
+
+            </div>
+
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center space-x-2">
+                            <h3 class="text-lg font-black text-slate-800">새로운 소식</h3>
+                            {% if user.is_staff %}
+                            <a href="{% url 'post_add' %}" class="w-6 h-6 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100 transition shadow-sm" title="공지사항 작성">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        <a href="#" class="text-xs font-bold text-indigo-500 hover:text-indigo-600">전체 보기</a>
+                    </div>
+                    
+                    <ul class="space-y-3">
+                        {% for notice in notices %}
+                        <li class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
+                            <a href="#" class="font-medium text-slate-700 hover:text-indigo-600 transition flex-1 truncate pr-4">
+                                <span class="inline-block px-1.5 py-0.5 bg-blue-50 text-blue-500 text-[10px] font-black rounded mr-1.5">new</span>
+                                {{ notice.title }}
+                            </a>
+                            
+                            <div class="flex items-center space-x-3 flex-shrink-0">
+                                <span class="text-xs text-slate-400">{{ notice.upload_time|date:"Y.m.d" }}</span>
+                                
+                                {% if user.is_staff %}
+                                <form action="{% url 'delete_post' notice.id %}" method="POST" class="inline-block" onsubmit="return confirm('이 공지사항을 정말 삭제하시겠습니까?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-slate-300 hover:text-rose-500 transition opacity-0 group-hover:opacity-100 p-1">
+                                        <i class="fa-solid fa-xmark text-sm"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="text-center py-5 text-slate-400 text-sm">등록된 공지사항이 없습니다.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="text-lg font-black text-slate-800 mb-6">모든 활동들을 한 눈에 모아보세요.</h3>
+                    <div class="relative pl-4 border-l-2 border-slate-100 space-y-8">
+                        {% for activity in activity_logs %}
+                        <div class="relative">
+                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-indigo-500 rounded-full ring-4 ring-white"></div>
+                            <p class="text-xs font-bold text-slate-400 mb-1">{{ activity.created_at|timesince }} 전</p>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p class="text-sm font-medium text-slate-700">{{ activity.message }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center py-10 text-slate-400 text-sm">아직 활동 내역이 없습니다. 학습을 시작해 보세요!</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-        
     </div>
 </div>
+
+<div id="schedule-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="schedule-modal-content">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-black text-slate-800">새 일정 추가</h3>
+            <button type="button" id="close-schedule-modal" class="text-slate-400 hover:text-rose-500 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="schedule-form" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">일정 제목</label>
+                <input type="text" id="sch-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium">
+            </div>
+            <div class="flex space-x-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">시작 일시</label>
+                    <input type="datetime-local" id="sch-start" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">종료 일시</label>
+                    <input type="datetime-local" id="sch-end" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">상세 내용 (선택)</label>
+                <textarea id="sch-desc" rows="2" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium resize-none"></textarea>
+            </div>
+            {% if user.is_staff %}
+            <div class="flex items-center mt-2">
+                <input type="checkbox" id="sch-is-global" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                <label for="sch-is-global" class="ml-2 text-sm font-bold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
+            </div>
+            {% endif %}
+            <div class="pt-2">
+                <button type="submit" id="save-sch-btn" class="w-full py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">
+                    일정 등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="edit-schedule-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-schedule-modal-content">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-black text-slate-800">일정 상세</h3>
+            <button type="button" id="close-edit-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="edit-schedule-form" class="p-6 space-y-4">
+            <input type="hidden" id="edit-sch-id">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">일정 제목</label>
+                <input type="text" id="edit-sch-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium">
+            </div>
+            <div class="flex space-x-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">시작 일시</label>
+                    <input type="datetime-local" id="edit-sch-start" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">종료 일시</label>
+                    <input type="datetime-local" id="edit-sch-end" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">상세 내용</label>
+                <textarea id="edit-sch-desc" rows="2" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium resize-none"></textarea>
+            </div>
+            {% if user.is_staff %}
+            <div class="flex items-center mt-2">
+                <input type="checkbox" id="edit-sch-is-global" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                <label for="edit-sch-is-global" class="ml-2 text-sm font-bold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
+            </div>
+            {% endif %}
+            <div class="pt-4 flex space-x-3">
+                <button type="button" id="delete-sch-btn" class="w-1/3 py-2.5 bg-rose-50 text-rose-600 border border-rose-100 text-sm font-bold rounded-xl hover:bg-rose-100 transition">
+                    삭제
+                </button>
+                <button type="submit" id="update-sch-btn" class="w-2/3 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">
+                    수정하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="profile-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="profile-modal-content">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-black text-slate-800">프로필 커스텀</h3>
+            <button type="button" id="close-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="profile-update-form" class="p-6 space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2">한 줄 소개 (Bio)</label>
+                <input type="text" id="input-bio" value="{{ request.user.student.bio|default:'' }}" placeholder="자신을 한 줄로 표현해 보세요!" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2">GitHub 주소</label>
+                <input type="url" id="input-github" value="{{ request.user.student.github_url|default:'' }}" placeholder="https://github.com/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2">블로그 주소</label>
+                <input type="url" id="input-blog" value="{{ request.user.student.blog_url|default:'' }}" placeholder="https://velog.io/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+            </div>
+            <div class="pt-4 flex justify-end">
+                <button type="submit" id="save-profile-btn" class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-md w-full">
+                    저장하고 반영하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    /* FullCalendar 기본 테두리 제거 */
+    .fc-theme-standard td, .fc-theme-standard th { border-color: #f8fafc !important; }
+    .fc-scrollgrid { border: none !important; }
+    
+    /* 헤더 및 폰트 스타일 */
+    .fc-col-header-cell-cushion { text-decoration: none !important; color: #64748b !important; font-weight: 700 !important; font-size: 0.875rem !important; }
+    .fc-daygrid-day-top { justify-content: center !important; padding-top: 8px !important; }
+    .fc-daygrid-day-number { text-decoration: none !important; color: #334155 !important; font-weight: 600 !important; font-size: 0.875rem !important; }
+
+    /* 주말 색상 */
+    .fc-day-sun .fc-daygrid-day-number, .fc-day-sun .fc-col-header-cell-cushion { color: #ef4444 !important; }
+    .fc-day-sat .fc-daygrid-day-number, .fc-day-sat .fc-col-header-cell-cushion { color: #3b82f6 !important; }
+
+    /* 오늘 날짜 (파란색 원) */
+    .fc-day-today { background-color: transparent !important; }
+    .fc-day-today .fc-daygrid-day-number {
+        background-color: #3b82f6 !important; color: white !important; border-radius: 50%;
+        width: 26px !important; height: 26px !important; display: inline-flex !important; 
+        align-items: center !important; justify-content: center !important; margin-top: 0 !important;
+    }
+
+    .fc-daygrid-event { background: transparent !important; border: none !important; box-shadow: none !important; margin: 0 !important; width: 100% !important; }
+    .fc-daygrid-day-events {
+        display: flex !important; flex-direction: column !important; align-items: center !important;
+        gap: 4px; margin-top: 6px !important; min-height: 12px !important;
+    }
+    .fc-daygrid-event-harness { width: 100% !important; display: flex; justify-content: center; }
+    .fc-event-main { width: 100% !important; }
+</style>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ==========================================
+    // 1. 달력 제어
+    // ==========================================
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ko',
+        headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+        height: 500,
+        events: '/api/schedules/', 
+
+        // 날짜에서 "일" 텍스트 제거
+        dayCellContent: function(arg) {
+            return { html: arg.dayNumberText.replace('일', '') };
+        },
+
+        // 💡 수정된 eventContent 함수
+        eventContent: function(arg) {
+            const isGlobal = arg.event.extendedProps.is_global;
+            // 공식(초록색), 개인(보라색) Tailwind 클래스 매핑
+            const bgColorClass = isGlobal ? 'bg-emerald-500' : 'bg-purple-500';
+            
+            // 너비 83%(w-10/12), 두께 6px(h-1.5), 가운데 정렬(mx-auto)을 적용한 선형 HTML 반환
+            return { html: `<div class="w-10/12 h-1.5 rounded-full ${bgColorClass} mx-auto"></div>` };
+        },
+        
+        // 빈 날짜 클릭 -> 일정 추가
+        dateClick: function(info) {
+            openScheduleModal(info.dateStr); 
+        },
+
+        // 기존 선 클릭 -> 일정 수정/삭제
+        eventClick: function(info) {
+            openEditModal(info.event);
+        }
+    });
+    calendar.render();
+
+    // ==========================================
+    // 2. 일정 추가 로직
+    // ==========================================
+    const schModal = document.getElementById('schedule-modal');
+    const schModalContent = document.getElementById('schedule-modal-content');
+    const closeSchBtn = document.getElementById('close-schedule-modal');
+    const schForm = document.getElementById('schedule-form');
+    
+    function openScheduleModal(dateStr) {
+        document.getElementById('sch-start').value = dateStr + 'T09:00';
+        document.getElementById('sch-end').value = dateStr + 'T10:00';
+        schModal.classList.remove('hidden');
+        setTimeout(() => {
+            schModal.classList.remove('opacity-0');
+            schModalContent.classList.remove('scale-95');
+        }, 10);
+    }
+
+    closeSchBtn.addEventListener('click', () => {
+        schModal.classList.add('opacity-0');
+        schModalContent.classList.add('scale-95');
+        setTimeout(() => schModal.classList.add('hidden'), 300);
+    });
+
+    schForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const submitBtn = document.getElementById('save-sch-btn');
+        submitBtn.innerText = "등록 중...";
+        submitBtn.disabled = true;
+
+        const isGlobalEl = document.getElementById('sch-is-global');
+        const data = {
+            title: document.getElementById('sch-title').value,
+            description: document.getElementById('sch-desc').value,
+            start: document.getElementById('sch-start').value,
+            end: document.getElementById('sch-end').value,
+            is_global: isGlobalEl ? isGlobalEl.checked : false
+        };
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch('/api/schedules/add/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.status === 'success') {
+                calendar.refetchEvents(); 
+                closeSchBtn.click(); 
+                schForm.reset(); 
+            } else alert('일정 등록 실패: ' + result.message);
+        })
+        .finally(() => {
+            submitBtn.innerText = "일정 등록하기";
+            submitBtn.disabled = false;
+        });
+    });
+
+    // ==========================================
+    // 3. 일정 수정/삭제 로직
+    // ==========================================
+    const editModal = document.getElementById('edit-schedule-modal');
+    const editModalContent = document.getElementById('edit-schedule-modal-content');
+    const editForm = document.getElementById('edit-schedule-form');
+    const deleteBtn = document.getElementById('delete-sch-btn');
+
+    function openEditModal(event) {
+        document.getElementById('edit-sch-id').value = event.id;
+        document.getElementById('edit-sch-title').value = event.title;
+        
+        // 날짜 포맷팅 (시간대 보정)
+        const formatStr = (d) => {
+            if(!d) return '';
+            const tzOffset = d.getTimezoneOffset() * 60000;
+            return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
+        };
+        document.getElementById('edit-sch-start').value = formatStr(event.start);
+        document.getElementById('edit-sch-end').value = formatStr(event.end);
+        document.getElementById('edit-sch-desc').value = event.extendedProps.description || '';
+        
+        const isGlobalEl = document.getElementById('edit-sch-is-global');
+        if(isGlobalEl) isGlobalEl.checked = event.extendedProps.is_global;
+
+        editModal.classList.remove('hidden');
+        setTimeout(() => {
+            editModal.classList.remove('opacity-0');
+            editModalContent.classList.remove('scale-95');
+        }, 10);
+    }
+
+    document.getElementById('close-edit-modal-btn').addEventListener('click', () => {
+        editModal.classList.add('opacity-0');
+        editModalContent.classList.add('scale-95');
+        setTimeout(() => editModal.classList.add('hidden'), 300);
+    });
+
+    editForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const id = document.getElementById('edit-sch-id').value;
+        const isGlobalEl = document.getElementById('edit-sch-is-global');
+        const data = {
+            title: document.getElementById('edit-sch-title').value,
+            description: document.getElementById('edit-sch-desc').value,
+            start: document.getElementById('edit-sch-start').value,
+            end: document.getElementById('edit-sch-end').value,
+            is_global: isGlobalEl ? isGlobalEl.checked : false
+        };
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/api/schedules/${id}/update/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(res => {
+            if(res.status === 'success') {
+                calendar.refetchEvents(); 
+                document.getElementById('close-edit-modal-btn').click(); 
+            } else alert('수정 실패: ' + res.message);
+        });
+    });
+
+    deleteBtn.addEventListener('click', function() {
+        if(!confirm('정말 이 일정을 삭제하시겠습니까?')) return;
+        const id = document.getElementById('edit-sch-id').value;
+
+        fetch(`/api/schedules/${id}/delete/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+        }).then(res => res.json()).then(res => {
+            if(res.status === 'success') {
+                calendar.refetchEvents(); 
+                document.getElementById('close-edit-modal-btn').click(); 
+            } else alert('삭제 실패: ' + res.message);
+        });
+    });
+
+    // ==========================================
+    // 4. 프로필 커스텀 로직
+    // ==========================================
+    const profileModal = document.getElementById('profile-modal');
+    const profileModalContent = document.getElementById('profile-modal-content');
+    const openProfileBtn = document.getElementById('open-modal-btn');
+    const closeProfileBtn = document.getElementById('close-modal-btn');
+    const profileForm = document.getElementById('profile-update-form');
+    
+    const uploadTrigger = document.getElementById('profile-upload-trigger');
+    const imageInput = document.getElementById('profile-image-input');
+    const profileDeleteBtn = document.getElementById('profile-delete-btn');
+    const imageDisplay = document.getElementById('profile-image-display');
+
+    uploadTrigger?.addEventListener('click', (e) => {
+        if (e.target.closest('#profile-delete-btn')) return; 
+        imageInput.click();
+    });
+
+    imageInput?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('picture', file);
+        formData.append('action', 'upload'); 
+        sendProfileImageRequest(formData);
+    });
+
+    profileDeleteBtn?.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        if (!confirm('프로필 이미지를 삭제하시겠습니까?')) return;
+        const formData = new FormData();
+        formData.append('action', 'delete'); 
+        sendProfileImageRequest(formData);
+    });
+
+    function sendProfileImageRequest(formData) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        fetch('/accounts/profile/picture/update/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
+        }).then(res => res.json()).then(data => {
+            if (data.status === 'success') imageDisplay.src = data.image_url; 
+            else alert('오류: ' + data.message);
+        }).finally(() => { imageInput.value = ''; });
+    }
+
+    openProfileBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        profileModal.classList.remove('hidden');
+        setTimeout(() => {
+            profileModal.classList.remove('opacity-0');
+            profileModalContent.classList.remove('scale-95');
+        }, 10);
+    });
+
+    closeProfileBtn?.addEventListener('click', () => {
+        profileModal.classList.add('opacity-0');
+        profileModalContent.classList.add('scale-95');
+        setTimeout(() => profileModal.classList.add('hidden'), 300);
+    });
+
+    profileForm?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const saveBtn = document.getElementById('save-profile-btn');
+        saveBtn.innerText = "저장 중...";
+        saveBtn.disabled = true;
+
+        const data = {
+            bio: document.getElementById('input-bio').value,
+            github_url: document.getElementById('input-github').value,
+            blog_url: document.getElementById('input-blog').value,
+        };
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch('/accounts/profile/update/api/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(result => {
+            if(result.status === 'success') {
+                closeProfileBtn.click();
+                window.location.reload(); 
+            } else alert('실패: ' + result.message);
+        }).finally(() => {
+            saveBtn.innerText = "저장하고 반영하기";
+            saveBtn.disabled = false;
+        });
+    });
+});
+</script>
 {% endblock %}

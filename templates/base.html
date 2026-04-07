@@ -28,6 +28,7 @@
                 <a href="{% url 'course_list' %}" class="hover:text-blue-600 transition">학습</a>
                 <a href="{% url 'problem_list' %}" class="hover:text-blue-600 transition">문제</a>
                 <a href="#" class="hover:text-blue-600 transition">대회</a>
+                <a href="{% url 'community_main' %}" class="text-slate-600 hover:text-indigo-600 font-bold transition">커뮤니티</a>
             </div>
 
             <div class="flex items-center space-x-4">
@@ -63,6 +64,7 @@
     <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-400 text-xs">
         &copy; 2026 IPSE Club. Intelligent Pioneer of Software Engineering.
     </footer>
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>

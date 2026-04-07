@@ -27,7 +27,7 @@
                 <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
                     <h2 class="text-xl font-black text-slate-800">과정 소개</h2>
                     {% if user.is_staff %}
-                    <button id="toggle-summary-btn" class="px-3 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold text-xs rounded-lg transition shadow-sm">
+                    <button type="button" id="toggle-summary-btn" class="px-3 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold text-xs rounded-lg transition shadow-sm">
                         편집
                     </button>
                     {% endif %}
@@ -38,9 +38,10 @@
                 </div>
 
                 {% if user.is_staff %}
-                <form id="summary-form" action="{% url 'course_update_summary' course.id %}" method="POST" class="hidden">
+                <form id="summary-form" action="{% url 'course_update_summary' course.slug %}" method="POST" class="hidden">
                     {% csrf_token %}
                     <textarea name="summary" rows="5" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-700 font-medium resize-none">{{ course.summary }}</textarea>
+                    
                     <div class="flex justify-end space-x-2 mt-3">
                         <button type="button" id="cancel-summary-btn" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-300 transition">취소</button>
                         <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg hover:bg-indigo-700 transition shadow-sm">저장하기</button>
@@ -178,25 +179,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. 커리큘럼 삭제(X) 버튼 토글 로직
-    // 2. 커리큘럼 삭제 및 추가 버튼 토글 로직
+  
+   // 2. 커리큘럼 삭제(X) 및 추가 버튼 토글 로직
     const toggleCurriculumBtn = document.getElementById('toggle-curriculum-btn');
-    const deleteForms = document.querySelectorAll('.delete-lesson-form');
-    const addLessonRow = document.getElementById('add-lesson-row'); // 추가 버튼 행 선택
+    const addLessonRow = document.getElementById('add-lesson-row');
 
     if (toggleCurriculumBtn) {
-        toggleCurriculumBtn.addEventListener('click', function() {
-            let isEditing = false;
+        // 💡 핵심 수정: 편집 상태를 버튼 클릭 시 독립적으로 추적하도록 변경
+        let isEditing = false;
 
-            // 기존 강의들의 삭제 폼 토글
+        toggleCurriculumBtn.addEventListener('click', function() {
+            // 버튼을 누를 때마다 상태를 반전 (true <-> false)
+            isEditing = !isEditing;
+
+            // 1. 기존 강의 삭제 폼 토글 (강의가 0개면 무시됨)
+            const deleteForms = document.querySelectorAll('.delete-lesson-form');
             deleteForms.forEach(form => {
-                form.classList.toggle('hidden');
-                if (!form.classList.contains('hidden')) {
-                    isEditing = true;
+                if (isEditing) {
+                    form.classList.remove('hidden');
+                } else {
+                    form.classList.add('hidden');
                 }
             });
 
-            // 편집 상태에 맞춰 하단 수업 추가 버튼 표시/숨김
+            // 2. 하단 수업 추가 버튼 표시/숨김 (강의가 0개여도 무조건 작동)
             if (addLessonRow) {
                 if (isEditing) {
                     addLessonRow.classList.remove('hidden');
@@ -205,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // 버튼 스타일 및 텍스트 변경
+            // 3. 버튼 텍스트 및 스타일 토글
             if (isEditing) {
                 this.innerText = '완료';
                 this.classList.replace('bg-slate-100', 'bg-indigo-100');

@@ -73,9 +73,16 @@ class User(AbstractUser):
         except:
             pass
 
+
 class Student(models.Model):
     """IPSE 동아리원(학생) 상세 정보 모델"""
     student = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    # 💡 프로필 커스텀을 위해 새로 추가할 필드들
+    bio = models.CharField(max_length=100, blank=True, verbose_name="한 줄 소개")
+    github_url = models.URLField(blank=True, verbose_name="GitHub 주소")
+    blog_url = models.URLField(blank=True, verbose_name="블로그 주소")
+    level = models.IntegerField(default=1, verbose_name="현재 레벨")
 
     class Meta:
         ordering = ("-student__date_joined",)
