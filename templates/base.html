@@ -9,39 +9,50 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-[#3a3a3a] min-h-screen flex flex-col">
     {% load static %} {% block navbar %}
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+    <nav class="bg-white/70 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-stretch">
 
-            <div class="flex items-center">
-                <a href="/" class="flex items-center space-x-2 group">
-                    <img src="{% static 'img/IPSE-LOGO.png' %}" alt="IPSE Logo" class="w-10 h-10 object-contain">
-                    <span
-                        class="text-2xl font-black text-slate-800 tracking-tighter group-hover:text-slate-600 transition">
+            <div class="flex items-center gap-10">
+                <a href="/" class="flex items-center gap-2 group">
+                    <i class="fa-solid fa-leaf text-emerald-600 text-[1.7rem] group-hover:scale-110 transition"></i>
+                    <span class="text-[2.15rem] font-semibold text-[#2f2f2f] tracking-[-0.04em] leading-none group-hover:text-[#3a3a3a] transition">
                         IPSE
                     </span>
                 </a>
-            </div>
 
-            <div class="hidden md:flex items-center space-x-8 text-sm font-bold text-slate-600">
-                <a href="{% url 'course_list' %}" class="hover:text-blue-600 transition">학습</a>
-                <a href="{% url 'problem_list' %}" class="hover:text-blue-600 transition">문제</a>
-                <a href="#" class="hover:text-blue-600 transition">대회</a>
-                <a href="{% url 'community_main' %}" class="text-slate-600 hover:text-indigo-600 font-bold transition">커뮤니티</a>
+                <div class="hidden md:flex h-full items-end gap-8 text-base font-medium text-slate-700">
+                    <a href="{% url 'course_list' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                        학습
+                    </a>
+                    <a href="{% url 'problem_list' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                        문제
+                    </a>
+                    <a href="{% url 'contest:list' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                        대회
+                    </a>
+                    <a href="{% url 'community_main' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                        커뮤니티
+                    </a>
+                </div>
             </div>
 
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
                 <div class="flex items-center space-x-2 bg-slate-50 px-2 py-1.5 rounded-full border border-slate-200 hover:bg-slate-100 transition duration-200">
-                    <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-[10px] text-white font-bold shadow-sm">
+                    <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-[10px] text-white font-medium shadow-sm">
                         LV.1
                     </div>
-                    <a href="/" class="px-2 text-sm font-bold text-slate-700 hover:text-blue-600 transition">
+                    <a href="/" class="px-2 text-sm font-medium text-slate-700 hover:text-emerald-600 transition">
                         {{ user.username }}님
                     </a>
                 </div>
-                
+
                 <form action="{% url 'logout' %}" method="post" class="inline">
                     {% csrf_token %}
                     <button type="submit" class="text-slate-400 hover:text-red-500 transition px-2" title="로그아웃">
@@ -50,7 +61,7 @@
                 </form>
                 {% else %}
                 <a href="{% url 'login' %}"
-                    class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">로그인</a>
+                   class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">로그인</a>
                 {% endif %}
             </div>
         </div>

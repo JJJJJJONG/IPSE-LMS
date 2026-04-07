@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}대회 종료 확인{% endblock %}
+
+{% block content %}
+<section class="max-w-4xl mx-auto px-6 py-16">
+    <div class="bg-white border border-slate-200 rounded-3xl p-10 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-rose-100 text-rose-700">
+                운영진 전용
+            </span>
+            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+                종료 확인 필요
+            </span>
+        </div>
+
+        <h1 class="text-4xl font-semibold text-[#3F3F3F] mb-4">
+            {{ contest.title }} 대회를 종료할까요?
+        </h1>
+
+        <p class="text-slate-500 leading-8 mb-8">
+            종료를 진행하면 현재 시각 기준으로 대회가 종료됩니다.
+            이후 참가자는 더 이상 입장 및 제출을 할 수 없습니다.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                <p class="text-sm font-medium text-slate-400 mb-2">현재 시작 시간</p>
+                <p class="text-lg font-semibold text-[#3F3F3F]">{{ contest.start_time }}</p>
+            </div>
+
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                <p class="text-sm font-medium text-slate-400 mb-2">현재 종료 시간</p>
+                <p class="text-lg font-semibold text-[#3F3F3F]">{{ contest.end_time }}</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+            <form method="post" action="{% url 'contest:terminate' contest.pk %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-rose-600 text-white text-base font-semibold hover:bg-rose-700 transition">
+                    확인, 종료합니다
+                </button>
+            </form>
+
+            <a href="{% url 'contest:detail' contest.pk %}"
+               class="inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                취소
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스코어보드 동결</title>
+</head>
+<body>
+    <h1>{{ contest.title }}</h1>
+    <p>현재 스코어보드는 동결되었습니다.</p>
+    <p>대회 종료 후 다시 확인할 수 있습니다.</p>
+
+    <p>
+        <a href="{% url 'contest:detail' contest.pk %}">대회 상세로 돌아가기</a>
+    </p>
+</body>
+</html>

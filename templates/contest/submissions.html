@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}전체 제출 목록{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="space-y-8">
+        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                <div>
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                        <div class="flex items-start justify-between gap-6 mb-6">
+                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-rose-100 text-rose-700">
+                                운영진 전용
+                            </span>
+
+                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                                총 {{ submissions|length }}개 제출
+                            </span>
+                        </div>
+
+                        <h1 class="text-4xl font-semibold text-[#3F3F3F] mb-4">
+                            {{ contest.title }} 전체 제출 목록
+                        </h1>
+
+                        <p class="text-slate-500 leading-7">
+                            참가자 이름, 문제, 결과, 채점 상태, 제출 코드까지 전체 제출 정보를 확인할 수 있습니다.
+                        </p>
+
+                        <div class="mt-6 flex justify-end">
+                            <button type="button"
+                                    onclick="history.back()"
+                                    class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
+                                돌아가기
+                            </button>
+                        </div>
+                    </div>
+
+        {% if submissions %}
+            <div class="space-y-6">
+                {% for submission in submissions %}
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
+                            <div class="space-y-2">
+                                <p class="text-sm font-medium text-slate-400">제출 정보</p>
+                                <h2 class="text-2xl font-semibold text-[#3F3F3F]">
+                                    {{ submission.user }} / {{ submission.problem.title }}
+                                </h2>
+                                <p class="text-slate-500">
+                                    {{ submission.submitted_at }}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3">
+                                <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-700">
+                                    {{ submission.language }}
+                                </span>
+
+                                <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium
+                                    {% if submission.result == 'AC' %}
+                                        bg-blue-100 text-blue-700
+                                    {% elif submission.result == 'WA' %}
+                                        bg-rose-100 text-rose-700
+                                    {% elif submission.result == 'RE' %}
+                                        bg-amber-100 text-amber-700
+                                    {% else %}
+                                        bg-slate-100 text-slate-600
+                                    {% endif %}
+                                ">
+                                    {{ submission.result }}
+                                </span>
+
+                                <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                                    {{ submission.passed_count }} / {{ submission.total_count }}
+                                </span>
+
+                                <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-700">
+                                    {{ submission.judge_task.status }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                                <p class="text-sm font-medium text-slate-400 mb-2">참가자</p>
+                                <p class="text-lg font-semibold text-[#3F3F3F]">{{ submission.user }}</p>
+                            </div>
+
+                            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                                <p class="text-sm font-medium text-slate-400 mb-2">문제</p>
+                                <p class="text-lg font-semibold text-[#3F3F3F]">{{ submission.problem.title }}</p>
+                            </div>
+
+                            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                                <p class="text-sm font-medium text-slate-400 mb-2">채점 메시지</p>
+                                <p class="text-lg font-semibold text-[#3F3F3F]">{{ submission.judge_message }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-semibold text-[#3F3F3F]">제출 코드</h3>
+                                <a href="{% url 'contest:submission_detail' contest.pk submission.pk %}"
+                                   class="text-emerald-600 font-medium hover:text-emerald-700 transition">
+                                    상세 보기
+                                </a>
+                            </div>
+
+                            <pre class="rounded-2xl  text-slate-100 p-6 overflow-x-auto text-sm">{{ submission.source_code }}</pre>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-400 font-semibold shadow-sm">
+                아직 제출 기록이 없습니다.
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

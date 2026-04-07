@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}{{ contest.title }} 스코어보드{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8 space-y-8">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                    <div>
+                        <h1 class="text-4xl font-semibold text-[#3F3F3F] mb-4">{{ contest.title }} 스코어보드</h1>
+                        <p class="text-slate-500 leading-7">
+                            참가자 순위, 해결 문제 수, 패널티를 확인할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="shrink-0">
+                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium
+                            {% if contest.status_label == '진행 중' %}
+                                bg-green-100 text-green-700
+                            {% elif contest.status_label == '동결 중' %}
+                                bg-amber-100 text-amber-700
+                            {% elif contest.status_label == '예정' %}
+                                bg-emerald-100 text-emerald-700
+                            {% else %}
+                                bg-slate-100 text-slate-600
+                            {% endif %}
+                        ">
+                            {{ contest.status_label }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-semibold text-[#3F3F3F]">순위표</h2>
+                    <span class="text-sm font-medium text-slate-400">실시간 반영</span>
+                </div>
+
+                {% if scoreboard_rows %}
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table class="min-w-full border-collapse">
+                            <thead class="bg-slate-50 border-b border-slate-200">
+                                <tr class="text-sm font-medium text-slate-500">
+                                    <th class="px-6 py-4 text-left">순위</th>
+                                    <th class="px-6 py-4 text-left">참가자</th>
+                                    <th class="px-6 py-4 text-center">푼 문제 수</th>
+                                    <th class="px-6 py-4 text-center">패널티</th>
+                                    {% for label in problem_labels %}
+                                        <th class="px-6 py-4 text-center">{{ label }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for row in scoreboard_rows %}
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                                        <td class="px-6 py-5">
+                                            <span class="inline-flex w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 font-semibold items-center justify-center">
+                                                {{ forloop.counter }}
+                                            </span>
+                                        </td>
+
+                                        <td class="px-6 py-5 font-semibold text-[#3F3F3F]">
+                                            {{ row.user }}
+                                        </td>
+
+                                        <td class="px-6 py-5 text-center font-semibold text-[#3F3F3F]">
+                                            {{ row.solved_count }}
+                                        </td>
+
+                                        <td class="px-6 py-5 text-center font-semibold text-[#3F3F3F]">
+                                            {{ row.penalty }}
+                                        </td>
+
+                                        {% for problem_result in row.problem_results %}
+                                            <td class="px-6 py-5 text-center">
+                                                {% if problem_result.display == "-" %}
+                                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                                                        -
+                                                    </span>
+                                                {% elif "AC" in problem_result.display %}
+                                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                                        {{ problem_result.display }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                                                        {{ problem_result.display }}
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-slate-400 font-semibold">
+                        아직 참가자가 없습니다.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="lg:col-span-4">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm sticky top-24">
+                <h2 class="text-3xl font-semibold text-[#3F3F3F] mb-8">스코어보드 메뉴</h2>
+
+                <div class="space-y-4">
+                    <a href="{% url 'contest:detail' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                        대회 상세 보기
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'contest:my_submissions' contest.pk %}"
+                           class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-transparent text-[#2f2f2f] text-base font-semibold hover:bg-slate-800 transition">
+                            내 제출 보기
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'contest:enter' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
+                        문제 목록으로
+                    </a>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-5 text-slate-600">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">대회명</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ contest.title }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">문제 수</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ problem_labels|length }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">반영 방식</span>
+                        <span class="font-semibold text-[#3F3F3F]">실시간</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

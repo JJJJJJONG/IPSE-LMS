@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}{{ contest.title }} 입장{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8 space-y-8">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium
+                                {% if contest.status_label == '진행 중' %}
+                                    bg-green-100 text-green-700
+                                {% elif contest.status_label == '동결 중' %}
+                                    bg-amber-100 text-amber-700
+                                {% elif contest.status_label == '예정' %}
+                                    bg-emerald-100 text-emerald-700
+                                {% else %}
+                                    bg-slate-100 text-slate-600
+                                {% endif %}
+                            ">
+                                {{ contest.status_label }}
+                            </span>
+
+                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                                입장 완료
+                            </span>
+                        </div>
+
+                        <h1 class="text-4xl font-semibold text-[#3F3F3F] leading-tight">
+                            {{ contest.title }}
+                        </h1>
+
+                        <p class="mt-4 text-slate-500 text-base leading-7">
+                            대회에 입장했습니다. 아래 문제 목록에서 문제를 선택해 풀이를 시작할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="shrink-0">
+                        <a href="{% url 'contest:scoreboard' contest.pk %}"
+                           class="inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-transparent text-[#2f2f2f] text-base font-semibold hover:bg-slate-800 transition">
+                            스코어보드 보기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-semibold text-[#3F3F3F]">문제 목록</h2>
+                    <span class="text-sm font-medium text-slate-400">문제를 클릭하면 상세 페이지로 이동합니다.</span>
+                </div>
+
+                {% if problem_rows %}
+                    <div class="overflow-hidden rounded-2xl border border-slate-200">
+                        <div class="grid grid-cols-12 px-6 py-4 text-sm font-medium text-slate-500 border-b border-slate-200 bg-slate-50">
+                            <div class="col-span-2">문제 번호</div>
+                            <div class="col-span-5">문제명</div>
+                            <div class="col-span-2 text-center">배점</div>
+                            <div class="col-span-3 text-center">내 상태</div>
+                        </div>
+
+                        {% for row in problem_rows %}
+                            <div class="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition">
+                                <div class="col-span-2">
+                                    <span class="inline-flex w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 font-semibold items-center justify-center">
+                                        {{ row.contest_problem.label }}
+                                    </span>
+                                </div>
+
+                                <div class="col-span-5">
+                                    <a href="{% url 'contest:problem_detail' contest.pk row.contest_problem.problem.pk %}"
+                                       class="text-xl font-semibold text-[#3F3F3F] hover:text-emerald-600 transition">
+                                        {{ row.contest_problem.problem.title }}
+                                    </a>
+                                </div>
+
+                                <div class="col-span-2 text-center">
+                                    <span class="text-lg font-semibold text-[#3F3F3F]">
+                                        {{ row.contest_problem.score }}
+                                    </span>
+                                </div>
+
+                                <div class="col-span-3 text-center">
+                                    {% if row.status == "AC" %}
+                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                                            AC
+                                        </span>
+                                    {% elif row.status == "WA" %}
+                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-rose-100 text-rose-700">
+                                            WA
+                                        </span>
+                                    {% elif row.status == "PENDING" %}
+                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+                                            PENDING
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600">
+                                            -
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-slate-400 font-semibold">
+                        등록된 문제가 없습니다.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="lg:col-span-4">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm sticky top-24">
+                <h2 class="text-3xl font-semibold text-[#3F3F3F] mb-8">대회 진행</h2>
+
+                <div class="space-y-5 text-slate-600">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <span class="font-semibold">현재 상태</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ contest.status_label }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <span class="font-semibold">문제 수</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ problem_rows|length }}개</span>
+                    </div>
+
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <span class="font-semibold">스코어보드</span>
+                        <span class="font-semibold text-emerald-600">실시간 반영</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">제출 기록</span>
+                        <span class="font-semibold text-[#3F3F3F]">즉시 확인 가능</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-4">
+                    <a href="{% url 'contest:my_submissions' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                        내 제출 보기
+                    </a>
+
+                    <a href="{% url 'contest:detail' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
+                        대회 상세로 돌아가기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

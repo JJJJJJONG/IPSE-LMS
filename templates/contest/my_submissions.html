@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}내 제출 목록{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8 space-y-8">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                    <div>
+                        <h1 class="text-4xl font-semibold text-[#3F3F3F] mb-4">{{ contest.title }} 내 제출 목록</h1>
+                        <p class="text-slate-500 leading-7">
+                            이 대회에서 내가 제출한 기록을 시간순으로 확인할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="shrink-0">
+                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                            총 {{ submissions|length }}개 제출
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-semibold text-[#3F3F3F]">제출 기록</h2>
+                    <span class="text-sm font-medium text-slate-400">제출 시각을 누르면 상세 페이지로 이동합니다.</span>
+                </div>
+
+                {% if submissions %}
+                    <div class="overflow-hidden rounded-2xl border border-slate-200">
+                        <div class="grid grid-cols-12 px-6 py-4 text-sm font-medium text-slate-500 border-b border-slate-200 bg-slate-50">
+                            <div class="col-span-4">제출 시각</div>
+                            <div class="col-span-2">문제</div>
+                            <div class="col-span-1 text-center">언어</div>
+                            <div class="col-span-1 text-center">결과</div>
+                            <div class="col-span-2 text-center">통과</div>
+                            <div class="col-span-2 text-center">작업 상태</div>
+                        </div>
+
+                        {% for submission in submissions %}
+                            <div class="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition">
+                                <div class="col-span-4">
+                                    <a href="{% url 'contest:submission_detail' contest.pk submission.pk %}"
+                                       class="font-medium text-slate-700 hover:text-emerald-600 transition">
+                                        {{ submission.submitted_at }}
+                                    </a>
+                                </div>
+
+                                <div class="col-span-2">
+                                    <span class="font-medium text-[#3F3F3F]">
+                                        {{ submission.problem.title }}
+                                    </span>
+                                </div>
+
+                                <div class="col-span-1 text-center text-slate-700 font-semibold">
+                                    {{ submission.language }}
+                                </div>
+
+                                <div class="col-span-1 text-center">
+                                    {% if submission.result == "AC" %}
+                                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                            AC
+                                        </span>
+                                    {% elif submission.result == "WA" %}
+                                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                                            WA
+                                        </span>
+                                    {% elif submission.result == "RE" %}
+                                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                            RE
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                            {{ submission.result }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-span-2 text-center text-slate-700 font-semibold">
+                                    {{ submission.passed_count }} / {{ submission.total_count }}
+                                </div>
+
+                                <div class="col-span-2 text-center text-slate-700 font-semibold">
+                                    {{ submission.judge_task.status }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-slate-400 font-semibold">
+                        아직 제출 기록이 없습니다.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="lg:col-span-4">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm sticky top-24">
+                <h2 class="text-3xl font-semibold text-[#3F3F3F] mb-8">내 제출 메뉴</h2>
+
+                <div class="space-y-4">
+                    <a href="{% url 'contest:detail' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                        대회 상세 보기
+                    </a>
+
+                    <a href="{% url 'contest:scoreboard' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-transparent text-[#2f2f2f] text-base font-semibold hover:bg-slate-800 transition">
+                        스코어보드 보기
+                    </a>
+
+                    <a href="{% url 'contest:enter' contest.pk %}"
+                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
+                        문제 목록으로
+                    </a>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-5 text-slate-600">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">대회명</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ contest.title }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">총 제출 수</span>
+                        <span class="font-semibold text-[#3F3F3F]">{{ submissions|length }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">채점 방식</span>
+                        <span class="font-semibold text-[#3F3F3F]">Python 1차</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
