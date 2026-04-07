@@ -6,19 +6,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-# ... (기존 FIRST, SECOND, SEMESTER, Manager 클래스들은 잔재일 수 있으나 에러 방지를 위해 그대로 유지) ...
-FIRST = _("First")
-SECOND = _("Second")
-THIRD = _("Third")
-
-SEMESTER = (
-    (FIRST, _("First")),
-    (SECOND, _("Second")),
-    (THIRD, _("Third")),
-)
-
-
-class Schedule(models.Model):s
+class Schedule(models.Model):
     """동아리 및 개인 일정 모델"""
     title = models.CharField(max_length=200, verbose_name="일정명")
     description = models.TextField(blank=True, null=True, verbose_name="상세 내용")

@@ -86,46 +86,41 @@
             </div>
 
                 <div class="lg:col-span-2 space-y-8">
+            
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-2">
-                            <h3 class="text-lg font-black text-slate-800">새로운 소식</h3>
-                            {% if user.is_staff %}
-                            <a href="{% url 'post_add' %}" class="w-6 h-6 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100 transition shadow-sm" title="공지사항 작성">
-                                <i class="fa-solid fa-plus text-xs"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                        <a href="#" class="text-xs font-bold text-indigo-500 hover:text-indigo-600">전체 보기</a>
-                    </div>
-                    
-                    <ul class="space-y-3">
-                        {% for notice in notices %}
-                        <li class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
-                            <a href="#" class="font-medium text-slate-700 hover:text-indigo-600 transition flex-1 truncate pr-4">
-                                <span class="inline-block px-1.5 py-0.5 bg-blue-50 text-blue-500 text-[10px] font-black rounded mr-1.5">new</span>
-                                {{ notice.title }}
-                            </a>
-                            
-                            <div class="flex items-center space-x-3 flex-shrink-0">
-                                <span class="text-xs text-slate-400">{{ notice.upload_time|date:"Y.m.d" }}</span>
-                                
-                                {% if user.is_staff %}
-                                <form action="{% url 'delete_post' notice.id %}" method="POST" class="inline-block" onsubmit="return confirm('이 공지사항을 정말 삭제하시겠습니까?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="text-slate-300 hover:text-rose-500 transition opacity-0 group-hover:opacity-100 p-1">
-                                        <i class="fa-solid fa-xmark text-sm"></i>
-                                    </button>
-                                </form>
-                                {% endif %}
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center space-x-2">
+                                <h3 class="text-lg font-black text-slate-800">새로운 소식</h3>
                             </div>
-                        </li>
-                        {% empty %}
-                        <li class="text-center py-5 text-slate-400 text-sm">등록된 공지사항이 없습니다.</li>
-                        {% endfor %}
-                    </ul>
+                            </div>
+                        
+                        <ul class="space-y-3">
+                            {% for notice in notices %}
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
+                                <a href="{% url 'notice_detail' notice.id %}" class="font-medium text-slate-700 hover:text-indigo-600 transition flex-1 truncate pr-4">
+                                    <span class="text-emerald-500 text-sm mr-1.5"><i class="fa-solid fa-leaf"></i></span>
+                                    {{ notice.title }}
+                                </a>
+                                
+                                <div class="flex items-center space-x-3 flex-shrink-0">
+                                    <span class="text-xs text-slate-400">{{ notice.upload_time|date:"Y.m.d" }}</span>
+                                    
+                                    {% if user.is_staff %}
+                                    <form action="{% url 'delete_post' notice.id %}" method="POST" class="inline-block" onsubmit="return confirm('이 공지사항을 정말 삭제하시겠습니까?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-slate-300 hover:text-rose-500 transition opacity-0 group-hover:opacity-100 p-1">
+                                            <i class="fa-solid fa-xmark text-sm"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li class="text-center py-5 text-slate-400 text-sm">등록된 공지사항이 없습니다.</li>
+                            {% endfor %}
+                        </ul>
                 </div>
-
+                    
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <h3 class="text-lg font-black text-slate-800 mb-6">모든 활동들을 한 눈에 모아보세요.</h3>
                     <div class="relative pl-4 border-l-2 border-slate-100 space-y-8">

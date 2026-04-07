@@ -1,14 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from accounts.decorators import lecturer_required 
-from . forms import NewsAndEventsForm
-from . models import NewsAndEvents, ActivityLog, Schedule
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from community.models import NewsAndEvents
+from .models import Schedule 
+
 
 # ########################################################
 # 1. IPSE 메인 대시보드 (Traffic Controller)
@@ -24,8 +23,9 @@ def home_view(request):
     events = NewsAndEvents.objects.filter(posted_as='Event').order_by('-upload_time')[:5]
     
     # 3. 오른쪽 아래 활동 내역 (해당 유저의 활동만 가져오기!)
-    # 기존 데이터에 user가 null인 경우가 있을 수 있으니 방어적으로 코딩
-    activity_logs = ActivityLog.objects.filter(user=request.user).order_by('-created_at')[:10]
+    # 💡 복구 3: 모델을 만들기 전까지는 빈 리스트([])를 넘겨서 화면 에러를 막음. 나중에 주석만 풀면 됨!
+    # activity_logs = ActivityLog.objects.filter(user=request.user).order_by('-created_at')[:10]
+    activity_logs = []
 
     context = {
         'notices': notices,
@@ -34,6 +34,8 @@ def home_view(request):
         'title': 'IPSE AI Academy 대시보드'
     }
     return render(request, 'core/index.html', context)
+
+# ... (이 아래 get_schedules_api 등 달력 로직은 기존 코드 100% 그대로 유지!) ...
 
 @login_required
 def get_schedules_api(request):
