@@ -36,18 +36,20 @@ PROJECT_APPS = [
     "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
     "course.apps.CourseConfig",
+    "result.apps.ResultConfig",
+    "search.apps.SearchConfig",
     "quiz.apps.QuizConfig",
+    "contest.apps.ContestConfig",
     "problems.apps.ProblemsConfig",
     "community.apps.CommunityConfig",
 ]
-
 
 # Combine all apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # 정적 파일 서빙 최적화 위치 조정
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -94,17 +96,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ==========================================
-# Internationalization (IPSE 맞춤 한국화)
-# ==========================================
-LANGUAGE_CODE = "ko-kr"  # 관리자 페이지 및 시스템 기본 언어를 한국어로 설정
-TIME_ZONE = "Asia/Seoul" # DB 저장 시간을 한국 시간(KST)으로 기준 변경
+LANGUAGE_CODE = "ko-kr"
+TIME_ZONE = "Asia/Seoul"
 USE_I18N = True
 USE_TZ = True
 
-# ==========================================
-# Static & Media files
-# ==========================================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
@@ -113,9 +109,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# ==========================================
-# E-mail configuration
-# ==========================================
 EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
@@ -128,9 +121,6 @@ EMAIL_USE_SSL = False
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# ==========================================
-# DRF setup (API 보안 설정)
-# ==========================================
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -139,7 +129,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-# LOGGING
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
