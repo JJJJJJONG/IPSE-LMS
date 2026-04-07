@@ -15,7 +15,7 @@ class NewsAndEvents(models.Model):
     updated_date = models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
     upload_time = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     event_date = models.DateField(null=True, blank=True, verbose_name="행사 진행 일자 (Event용)")
-
+    thumbnail = models.ImageField(upload_to='activities/thumbnails/', null=True, blank=True, verbose_name="썸네일")
     objects = NewsAndEventsManager()
 
     def __str__(self):

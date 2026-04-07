@@ -6,29 +6,23 @@
     <div class="max-w-5xl mx-auto px-4 space-y-10">
         
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-black text-slate-800">공지사항</h2>
-                
                 {% if user.is_staff %}
                 <button type="button" id="open-post-modal-btn" class="flex items-center justify-center px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-bold rounded-lg hover:bg-indigo-100 transition shadow-sm">
                     <i class="fa-solid fa-pen mr-2"></i> 공지 작성
                 </button>
                 {% endif %}
             </div>
-
             <div class="relative w-full mb-8">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
                 </div>
                 <input type="text" class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition" placeholder="">
             </div>
-
             <div class="flex justify-between text-[13px] font-bold text-slate-400 border-b border-slate-100 pb-3 mb-2 px-2">
-                <span>제목</span>
-                <span>작성 시간</span>
+                <span>제목</span><span>작성 시간</span>
             </div>
-
             <ul class="space-y-0">
                 {% for notice in notices %}
                 <li class="flex justify-between items-center py-4 border-b border-slate-50 hover:bg-slate-50 transition px-2 rounded-lg group">
@@ -45,26 +39,33 @@
             </ul>
         </div>
 
-
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
             <div class="flex justify-between items-end mb-6 border-b border-slate-100 pb-4">
                 <h2 class="text-3xl font-black text-slate-800">동아리 활동</h2>
                 {% if user.is_staff %}
-                <button class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-200 transition">
+                <button type="button" id="open-activity-modal-btn" class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-200 transition">
                     + 활동 기록하기
                 </button>
                 {% endif %}
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="group cursor-pointer">
+                {% for activity in activities %}
+                <div class="group cursor-pointer" onclick="location.href='{% url 'activity_detail' activity.id %}'">
                     <div class="w-full aspect-[4/3] bg-slate-200 rounded-xl overflow-hidden mb-3 relative">
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300 z-10"></div>
-                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800" alt="활동" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% if activity.thumbnail %}
+                        <img src="{{ activity.thumbnail.url }}" alt="활동 썸네일" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800" alt="기본 활동 썸네일" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% endif %}
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition">개강총회 및 신입생 환영회</h4>
-                    <p class="text-sm text-slate-500 mt-1">2026.03.15</p>
+                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition truncate">{{ activity.title }}</h4>
+                    <p class="text-sm text-slate-500 mt-1">{{ activity.upload_time|date:"Y.m.d" }}</p>
                 </div>
+                {% empty %}
+                <div class="col-span-3 py-10 text-center text-slate-400 font-medium">등록된 동아리 활동이 없습니다.</div>
+                {% endfor %}
             </div>
         </div>
 
@@ -73,35 +74,49 @@
 
 <div id="post-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
     <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="post-modal-content">
-        
         <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
             <h3 class="text-xl font-black text-slate-800">새 공지사항 작성</h3>
-            <button type="button" id="close-post-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
-                <i class="fa-solid fa-xmark text-2xl"></i>
-            </button>
+            <button type="button" id="close-post-modal-btn" class="text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
         </div>
-
         <form id="post-form" action="{% url 'post_add' %}" method="POST" class="p-8">
             {% csrf_token %}
-            
             <div class="mb-5">
                 <label class="block text-sm font-bold text-slate-700 mb-2">제목</label>
-                <input type="text" name="title" required placeholder="공지사항 제목을 입력하세요" 
-                       class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
+                <input type="text" name="title" required placeholder="공지사항 제목" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
             </div>
-
             <input type="hidden" name="posted_as" value="News">
-            <input type="hidden" name="summary" id="hidden-content">
+            <input type="hidden" name="summary" id="hidden-notice-content">
+            <div class="mb-6"><div id="notice-editor"></div></div>
+            <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">공지 등록하기</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-bold text-slate-700 mb-2">내용</label>
-                <div id="editor"></div>
+<div id="activity-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="activity-modal-content">
+        <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="text-xl font-black text-slate-800">동아리 활동 기록</h3>
+            <button type="button" id="close-activity-modal-btn" class="text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+        <form id="activity-form" action="{% url 'post_add' %}" method="POST" enctype="multipart/form-data" class="p-8">
+            {% csrf_token %}
+            <div class="mb-5">
+                <label class="block text-sm font-bold text-slate-700 mb-2">활동 제목</label>
+                <input type="text" name="title" required placeholder="예) 개강총회 및 신입생 환영회" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
             </div>
 
+            <div class="mb-5">
+                <label class="block text-sm font-bold text-slate-700 mb-2">썸네일 이미지 (선택)</label>
+                <input type="file" name="thumbnail" accept="image/*" class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
+            </div>
+
+            <input type="hidden" name="posted_as" value="Event">
+            <input type="hidden" name="summary" id="hidden-activity-content">
+            <div class="mb-6"><div id="activity-editor"></div></div>
             <div class="flex justify-end pt-4 border-t border-slate-100">
-                <button type="submit" id="submit-post-btn" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">
-                    공지 등록하기
-                </button>
+                <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">활동 등록하기</button>
             </div>
         </form>
     </div>
@@ -114,52 +129,61 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // 공지사항 모달 변수
     const postModal = document.getElementById('post-modal');
     const postModalContent = document.getElementById('post-modal-content');
-    const openPostBtn = document.getElementById('open-post-modal-btn');
-    const closePostBtn = document.getElementById('close-post-modal-btn');
-    const postForm = document.getElementById('post-form');
     
-    let editor; // 에디터 인스턴스를 담을 변수
+    // 활동 모달 변수
+    const activityModal = document.getElementById('activity-modal');
+    const activityModalContent = document.getElementById('activity-modal-content');
 
-    // 1. 모달 열기 및 에디터 초기화
-    openPostBtn?.addEventListener('click', (e) => {
-        e.preventDefault();
+    let noticeEditor;
+    let activityEditor;
+
+    // --- 공지사항 작성 로직 ---
+    document.getElementById('open-post-modal-btn')?.addEventListener('click', (e) => {
         postModal.classList.remove('hidden');
-        
-        if (!editor) {
-            editor = new toastui.Editor({
-                el: document.querySelector('#editor'),
-                height: '400px',
-                initialEditType: 'markdown',
-                previewStyle: 'vertical',
-                placeholder: '공지할 내용을 마크다운으로 작성해 주세요.',
-                language: 'ko'
+        if (!noticeEditor) {
+            noticeEditor = new toastui.Editor({
+                el: document.querySelector('#notice-editor'),
+                height: '400px', initialEditType: 'markdown', previewStyle: 'vertical',
+                placeholder: '공지 내용을 작성해 주세요.', language: 'ko'
             });
         }
-
-        setTimeout(() => {
-            postModal.classList.remove('opacity-0');
-            postModalContent.classList.remove('scale-95');
-        }, 10);
+        setTimeout(() => { postModal.classList.remove('opacity-0'); postModalContent.classList.remove('scale-95'); }, 10);
     });
 
-    // 2. 모달 닫기
-    closePostBtn?.addEventListener('click', () => {
-        postModal.classList.add('opacity-0');
-        postModalContent.classList.add('scale-95');
+    document.getElementById('close-post-modal-btn')?.addEventListener('click', () => {
+        postModal.classList.add('opacity-0'); postModalContent.classList.add('scale-95');
         setTimeout(() => postModal.classList.add('hidden'), 300);
     });
 
-    // 3. 폼 제출 시 데이터 가공
-    postForm?.addEventListener('submit', function(e) {
-        const content = editor.getMarkdown();
-        document.getElementById('hidden-content').value = content;
-        
-        if (!content.trim()) {
-            e.preventDefault();
-            alert('내용을 입력해 주세요.');
+    document.getElementById('post-form')?.addEventListener('submit', function(e) {
+        document.getElementById('hidden-notice-content').value = noticeEditor.getMarkdown();
+        if (!noticeEditor.getMarkdown().trim()) { e.preventDefault(); alert('내용을 입력해 주세요.'); }
+    });
+
+    // --- 동아리 활동 작성 로직 ---
+    document.getElementById('open-activity-modal-btn')?.addEventListener('click', (e) => {
+        activityModal.classList.remove('hidden');
+        if (!activityEditor) {
+            activityEditor = new toastui.Editor({
+                el: document.querySelector('#activity-editor'),
+                height: '400px', initialEditType: 'markdown', previewStyle: 'vertical',
+                placeholder: '활동 내용을 마크다운으로 기록하고 사진을 첨부해 보세요.', language: 'ko'
+            });
         }
+        setTimeout(() => { activityModal.classList.remove('opacity-0'); activityModalContent.classList.remove('scale-95'); }, 10);
+    });
+
+    document.getElementById('close-activity-modal-btn')?.addEventListener('click', () => {
+        activityModal.classList.add('opacity-0'); activityModalContent.classList.add('scale-95');
+        setTimeout(() => activityModal.classList.add('hidden'), 300);
+    });
+
+    document.getElementById('activity-form')?.addEventListener('submit', function(e) {
+        document.getElementById('hidden-activity-content').value = activityEditor.getMarkdown();
+        if (!activityEditor.getMarkdown().trim()) { e.preventDefault(); alert('내용을 입력해 주세요.'); }
     });
 });
 </script>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ notice.title }} - IPSE{% endblock %}
+{% block title %}{{ activity.title }} - IPSE 활동{% endblock %}
 
 {% block content %}
 <div class="bg-slate-50 min-h-screen py-10">
@@ -7,23 +7,23 @@
         
         <div class="mb-6">
             <a href="{% url 'community_main' %}" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition flex items-center">
-                <i class="fa-solid fa-arrow-left mr-2"></i> 공지사항 목록으로
+                <i class="fa-solid fa-arrow-left mr-2"></i> 활동 목록으로
             </a>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 mb-8 relative">
             <div class="border-b border-slate-100 pb-6 mb-8">
                 <div class="flex items-center space-x-2 mb-3">
-                    <span class="px-2 py-0.5 bg-blue-50 text-blue-500 text-[10px] font-black rounded">Dreamhack 벤치마크</span>
+                    <span class="px-2 py-0.5 bg-indigo-50 text-indigo-500 text-[10px] font-black rounded">동아리 활동</span>
                 </div>
-                <h1 class="text-3xl font-black text-slate-800 mb-4">{{ notice.title }}</h1>
+                <h1 class="text-3xl font-black text-slate-800 mb-4">{{ activity.title }}</h1>
                 <div class="flex items-center text-sm font-medium text-slate-400 space-x-4">
                     <span class="flex items-center"><i class="fa-solid fa-user mr-1.5"></i> IPSE 관리자</span>
-                    <span class="flex items-center"><i class="fa-regular fa-clock mr-1.5"></i> {{ notice.upload_time|date:"Y.m.d H:i" }}</span>
+                    <span class="flex items-center"><i class="fa-regular fa-clock mr-1.5"></i> {{ activity.upload_time|date:"Y.m.d H:i" }}</span>
                 </div>
             </div>
 
-            {{ notice.summary|json_script:"notice-data" }}
+            {{ activity.summary|json_script:"activity-data" }}
 
             <div id="viewer" class="text-slate-700 leading-relaxed min-h-[200px]"></div>
             
@@ -32,7 +32,7 @@
                 <button type="button" id="open-edit-modal-btn" class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-200 transition">
                     수정
                 </button>
-                <form action="{% url 'delete_post' notice.id %}" method="POST" onsubmit="return confirm('이 공지사항을 정말 삭제하시겠습니까?');">
+                <form action="{% url 'delete_post' activity.id %}" method="POST" onsubmit="return confirm('이 활동 기록을 정말 삭제하시겠습니까?');">
                     {% csrf_token %}
                     <button type="submit" class="px-4 py-2 bg-rose-50 text-rose-600 text-sm font-bold rounded-lg hover:bg-rose-100 transition">
                         삭제
@@ -41,39 +41,26 @@
             </div>
             {% endif %}
         </div>
-
     </div>
 </div>
 
 {% if user.is_staff %}
 <div id="edit-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
     <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
-        
         <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="text-xl font-black text-slate-800">공지사항 수정</h3>
-            <button type="button" id="close-edit-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
-                <i class="fa-solid fa-xmark text-2xl"></i>
-            </button>
+            <h3 class="text-xl font-black text-slate-800">활동 기록 수정</h3>
+            <button type="button" id="close-edit-modal-btn" class="text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
         </div>
-
-        <form id="edit-form" action="{% url 'edit_post' notice.id %}" method="POST" class="p-8">
+        <form id="edit-form" action="{% url 'edit_post' activity.id %}" method="POST" class="p-8">
             {% csrf_token %}
             <div class="mb-5">
                 <label class="block text-sm font-bold text-slate-700 mb-2">제목</label>
-                <input type="text" name="title" value="{{ notice.title }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
+                <input type="text" name="title" value="{{ activity.title }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
             </div>
-
             <input type="hidden" name="summary" id="hidden-edit-content">
-
-            <div class="mb-6">
-                <label class="block text-sm font-bold text-slate-700 mb-2">내용</label>
-                <div id="editor"></div>
-            </div>
-
+            <div class="mb-6"><div id="editor"></div></div>
             <div class="flex justify-end pt-4 border-t border-slate-100">
-                <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">
-                    수정 완료
-                </button>
+                <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">수정 완료</button>
             </div>
         </form>
     </div>
@@ -87,21 +74,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const noticeContent = JSON.parse(document.getElementById('notice-data').textContent);
+    const activityContent = JSON.parse(document.getElementById('activity-data').textContent);
 
     const viewer = new toastui.Editor.factory({
         el: document.querySelector('#viewer'),
         viewer: true,
-        initialValue: noticeContent
+        initialValue: activityContent
     });
 
     {% if user.is_staff %}
     const editModal = document.getElementById('edit-modal');
     const editModalContent = document.getElementById('edit-modal-content');
-    const openEditBtn = document.getElementById('open-edit-modal-btn');
-    const closeEditBtn = document.getElementById('close-edit-modal-btn');
-    const editForm = document.getElementById('edit-form');
-    
     let editor; 
 
     // 💡 이미지 가로채기 훅(Hook) 함수 추가
@@ -125,42 +108,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    openEditBtn?.addEventListener('click', () => {
+    document.getElementById('open-edit-modal-btn')?.addEventListener('click', () => {
         editModal.classList.remove('hidden');
-        
         if (!editor) {
             editor = new toastui.Editor({
                 el: document.querySelector('#editor'),
-                height: '400px',
-                initialEditType: 'markdown',
-                previewStyle: 'vertical',
-                initialValue: noticeContent,
-                language: 'ko',
+                height: '400px', initialEditType: 'markdown', previewStyle: 'vertical',
+                initialValue: activityContent, language: 'ko',
                 // 💡 수정 모드 에디터에도 훅 적용!
                 hooks: { addImageBlobHook: imageUploadHook }
             });
         }
-
-        setTimeout(() => {
-            editModal.classList.remove('opacity-0');
-            editModalContent.classList.remove('scale-95');
-        }, 10);
+        setTimeout(() => { editModal.classList.remove('opacity-0'); editModalContent.classList.remove('scale-95'); }, 10);
     });
 
-    closeEditBtn?.addEventListener('click', () => {
-        editModal.classList.add('opacity-0');
-        editModalContent.classList.add('scale-95');
+    document.getElementById('close-edit-modal-btn')?.addEventListener('click', () => {
+        editModal.classList.add('opacity-0'); editModalContent.classList.add('scale-95');
         setTimeout(() => editModal.classList.add('hidden'), 300);
     });
 
-    editForm?.addEventListener('submit', function(e) {
-        const updatedContent = editor.getMarkdown();
-        document.getElementById('hidden-edit-content').value = updatedContent;
-        
-        if (!updatedContent.trim()) {
-            e.preventDefault();
-            alert('내용을 입력해 주세요.');
-        }
+    document.getElementById('edit-form')?.addEventListener('submit', function(e) {
+        document.getElementById('hidden-edit-content').value = editor.getMarkdown();
+        if (!editor.getMarkdown().trim()) { e.preventDefault(); alert('내용을 입력해 주세요.'); }
     });
     {% endif %}
 });

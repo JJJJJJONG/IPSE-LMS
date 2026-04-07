@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import View
-# 🚨 Program을 지우고, 우리가 만든 CourseCategory와 Course를 불러옵니다.
 from course.models import Course, CourseCategory
 
 class SearchView(View):
