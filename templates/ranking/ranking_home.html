@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}랭킹{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-8 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-8 py-7 shadow-sm">
+        <p class="text-xs font-semibold tracking-[0.18em] text-emerald-700">RANKING HUB</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-800">IPSE 통합 랭킹</h1>
+        <p class="mt-2 text-sm text-slate-500">문제 풀이와 대회 성과를 같은 기준의 화면으로 확인할 수 있습니다.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <aside class="lg:col-span-2">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sticky top-24">
+                <p class="text-xs font-bold text-slate-400 tracking-wider mb-3">RANKING MENU</p>
+                <nav class="space-y-1">
+                    <a href="?board=problems"
+                       class="block px-3 py-2 rounded-md font-semibold transition {% if board == 'problems' %}bg-emerald-50 text-emerald-700{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+                        문제 랭킹
+                    </a>
+                    {% if contest_ranking_enabled %}
+                    <a href="?board=contest"
+                       class="block px-3 py-2 rounded-md font-semibold transition {% if board == 'contest' %}bg-emerald-50 text-emerald-700{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+                        대회 랭킹
+                    </a>
+                    {% else %}
+                    <span class="block px-3 py-2 rounded-md font-semibold text-slate-300 cursor-not-allowed">
+                        대회 랭킹 (비활성)
+                    </span>
+                    {% endif %}
+                </nav>
+            </div>
+        </aside>
+
+        <div class="lg:col-span-10 space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-slate-800">{{ board_label }}</h1>
+                        <p class="text-sm text-slate-500 mt-1">상위 3명과 전체 순위를 확인할 수 있습니다.</p>
+                    </div>
+
+                    <form method="GET" class="flex flex-col md:flex-row gap-3 w-full xl:w-auto">
+                        <input type="hidden" name="board" value="{{ board }}">
+
+                        {% if board == 'contest' %}
+                        <select name="season" class="h-11 px-3 rounded-md border border-slate-200 bg-white text-sm text-slate-700">
+                            {% for contest in season_queryset %}
+                            <option value="{{ contest.id }}" {% if selected_season_id == contest.id %}selected{% endif %}>{{ contest.title }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+
+                        <input type="text" name="q" value="{{ query }}" placeholder="유저 닉네임 검색해 보세요."
+                               class="h-11 w-full md:w-72 px-4 rounded-md border border-slate-200 bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500">
+                        <button type="submit" class="h-11 px-5 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                            검색
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {% for row in top_rows %}
+                <div class="relative bg-white rounded-2xl border border-slate-200 shadow-sm p-6 pt-10 text-center overflow-hidden">
+                    <div class="absolute top-0 left-6">
+                        {% if forloop.counter == 1 %}
+                        <div class="relative w-14 h-16 bg-gradient-to-b from-emerald-500 to-emerald-700 clip-flag text-white flex items-center justify-center font-black text-xl">1</div>
+                        {% elif forloop.counter == 2 %}
+                        <div class="relative w-14 h-16 bg-gradient-to-b from-emerald-300 to-emerald-600 clip-flag text-white flex items-center justify-center font-black text-xl">2</div>
+                        {% else %}
+                        <div class="relative w-14 h-16 bg-gradient-to-b from-slate-400 to-slate-600 clip-flag text-white flex items-center justify-center font-black text-xl">3</div>
+                        {% endif %}
+                    </div>
+
+                    <img src="{{ row.user.get_picture }}" alt="{{ row.user.display_name }}" class="w-24 h-24 rounded-full border-4 border-slate-100 object-cover mx-auto mb-4">
+                    <p class="text-xl font-bold text-slate-800">{{ row.user.display_name }}</p>
+
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+                        <div class="rounded-lg bg-slate-50 py-2">
+                            {% if board == 'problems' %}
+                            <p class="text-[11px] text-slate-400">POINTS</p>
+                            <p class="text-2xl font-bold text-emerald-600">{{ row.score }}</p>
+                            {% else %}
+                            <p class="text-[11px] text-slate-400">SOLVED</p>
+                            <p class="text-2xl font-bold text-emerald-600">{{ row.score }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="rounded-lg bg-slate-50 py-2">
+                            {% if board == 'problems' %}
+                            <p class="text-[11px] text-slate-400">해결 문제 수</p>
+                            <p class="text-2xl font-bold text-slate-700">{{ row.solved_count }}</p>
+                            {% else %}
+                            <p class="text-[11px] text-slate-400">PENALTY</p>
+                            <p class="text-2xl font-bold text-slate-700">{{ row.penalty }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="md:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-10 text-center text-slate-400">표시할 랭킹 데이터가 없습니다.</div>
+                {% endfor %}
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="max-h-[560px] overflow-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-sm text-slate-500 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-4">순위</th>
+                                <th class="px-6 py-4">유저 정보</th>
+                                {% if board == 'problems' %}
+                                <th class="px-6 py-4 text-center">POINTS</th>
+                                <th class="px-6 py-4 text-center">해결 문제 수</th>
+                                {% else %}
+                                <th class="px-6 py-4 text-center">SOLVED</th>
+                                <th class="px-6 py-4 text-center">PENALTY</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-[15px]">
+                            {% for row in ranking_rows %}
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-semibold text-slate-600">{{ forloop.counter }}위</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ row.user.get_picture }}" alt="{{ row.user.display_name }}" class="w-9 h-9 rounded-full border border-slate-200 object-cover">
+                                        <span class="font-semibold text-slate-800">{{ row.user.display_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">{{ row.score }}</td>
+                                {% if board == 'problems' %}
+                                <td class="px-6 py-4 text-center font-semibold text-slate-700">{{ row.solved_count }}</td>
+                                {% else %}
+                                <td class="px-6 py-4 text-center font-semibold text-slate-700">{{ row.penalty }}</td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400">랭킹 데이터가 없습니다.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .clip-flag {
+        clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+        border-radius: 0 0 8px 8px;
+    }
+</style>
+{% endblock %}

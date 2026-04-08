@@ -5,7 +5,7 @@
 <section class="max-w-7xl mx-auto px-6 py-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8 space-y-6">
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
                     <div>
                         <h1 class="text-4xl font-semibold text-[#3a3a3a] tracking-tight mb-4">
@@ -18,23 +18,23 @@
 
                     <div class="shrink-0">
                         {% if submission.result == 'AC' %}
-                            <span class="inline-flex px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                            <span class="inline-flex px-4 py-2 rounded-md text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                                 AC
                             </span>
                         {% elif submission.result == 'WA' %}
-                            <span class="inline-flex px-4 py-2 rounded-xl text-sm font-semibold bg-rose-50 text-rose-700 border border-rose-100">
+                            <span class="inline-flex px-4 py-2 rounded-md text-sm font-semibold bg-rose-50 text-rose-700 border border-rose-100">
                                 WA
                             </span>
                         {% elif submission.result == 'RE' %}
-                            <span class="inline-flex px-4 py-2 rounded-xl text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-100">
+                            <span class="inline-flex px-4 py-2 rounded-md text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-100">
                                 RE
                             </span>
                         {% elif submission.result == 'PENDING' %}
-                            <span class="inline-flex px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            <span class="inline-flex px-4 py-2 rounded-md text-sm font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                                 PENDING
                             </span>
                         {% else %}
-                            <span class="inline-flex px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                            <span class="inline-flex px-4 py-2 rounded-md text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                 {{ submission.result }}
                             </span>
                         {% endif %}
@@ -43,59 +43,59 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">대회</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ contest.title }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">문제</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.problem.title }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">제출자</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.user }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">언어</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.language }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">제출 시각</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.submitted_at }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">채점 작업 상태</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.judge_task.status }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">통과 테스트 수</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.passed_count }} / {{ submission.total_count }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">채점 메시지</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ submission.judge_message }}</p>
                 </div>
             </div>
 
             {% if submission.judge_task.status == "FAILED" %}
-                <div class="bg-white/90 backdrop-blur-sm border border-rose-200 rounded-2xl p-6 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-rose-200 rounded-md p-6 shadow-sm">
                     <p class="text-sm font-semibold text-rose-600 mb-3">채점 오류</p>
                     <p class="text-base font-semibold text-rose-700">{{ submission.judge_task.error_message }}</p>
                 </div>
             {% endif %}
 
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-6">테스트케이스 결과</h2>
 
                 {% if testcase_results %}
-                    <div class="overflow-hidden rounded-2xl border border-slate-200">
+                    <div class="overflow-hidden rounded-md border border-slate-200">
                         <div class="grid grid-cols-12 px-6 py-4 text-sm font-medium text-slate-500 border-b border-slate-200 bg-slate-50">
                             <div class="col-span-2">순서</div>
                             <div class="col-span-2 text-center">결과</div>
@@ -106,18 +106,18 @@
                         {% for item in testcase_results %}
                             <div class="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition">
                                 <div class="col-span-2">
-                                    <div class="w-10 h-10 rounded-xl bg-transparent text-[#2f2f2f] text-sm font-semibold flex items-center justify-center">
+                                    <div class="w-10 h-10 rounded-md bg-transparent text-[#2f2f2f] text-sm font-semibold flex items-center justify-center">
                                         {{ item.testcase.order }}
                                     </div>
                                 </div>
 
                                 <div class="col-span-2 text-center">
                                     {% if item.passed %}
-                                        <span class="inline-flex px-3 py-1 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
                                             PASS
                                         </span>
                                     {% else %}
-                                        <span class="inline-flex px-3 py-1 rounded-lg text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
                                             FAIL
                                         </span>
                                     {% endif %}
@@ -125,7 +125,7 @@
 
                                 <div class="col-span-4 pr-3">
                                     {% if can_view_full_testcase_results or item.testcase.is_sample %}
-                                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                                        <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
                                             <pre class="text-xs leading-6 text-slate-700 overflow-x-auto whitespace-pre-wrap break-words">{{ item.actual_output|default:"-" }}</pre>
                                         </div>
                                     {% else %}
@@ -135,7 +135,7 @@
 
                                 <div class="col-span-4 pl-3">
                                     {% if can_view_full_testcase_results or item.testcase.is_sample %}
-                                        <div class="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm leading-6 text-slate-700 font-semibold break-words">
+                                        <div class="rounded-md border border-slate-200 bg-white px-3 py-3 text-sm leading-6 text-slate-700 font-semibold break-words">
                                             {{ item.judge_message|default:"-" }}
                                         </div>
                                     {% else %}
@@ -146,20 +146,20 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-400 font-semibold">
+                    <div class="rounded-md border border-slate-200 bg-slate-50 p-8 text-center text-slate-400 font-semibold">
                         테스트케이스 결과가 없습니다.
                     </div>
                 {% endif %}
             </div>
 
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-6">소스 코드</h2>
-                <pre class="rounded-2xl  text-slate-100 p-6 overflow-x-auto text-sm">{{ submission.source_code }}</pre>
+                <pre class="rounded-md border border-slate-200 bg-slate-900 text-slate-100 p-6 overflow-x-auto text-sm">{{ submission.source_code }}</pre>
             </div>
         </div>
 
         <div class="lg:col-span-4">
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm sticky top-24">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm sticky top-24">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight">제출 메뉴</h2>
                     <span class="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700">Submission</span>
@@ -167,33 +167,33 @@
 
                 <div class="space-y-3">
                     <a href="{% url 'contest:my_submissions' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         내 제출 목록으로
                     </a>
 
                     <a href="{% url 'contest:problem_detail' contest.pk submission.problem.pk %}"
-                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         문제로 돌아가기
                     </a>
 
-                    <a href="{% url 'contest:scoreboard' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    <a href="{% url 'ranking:home' %}?board=contest&season={{ contest.pk }}"
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
                         스코어보드 보기
                     </a>
                 </div>
 
                 <div class="mt-8 pt-8 border-t border-slate-100 space-y-4">
-                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <div class="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4">
                         <span class="text-sm font-semibold text-slate-500">결과</span>
                         <span class="text-sm font-semibold text-[#3a3a3a]">{{ submission.result }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <div class="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4">
                         <span class="text-sm font-semibold text-slate-500">언어</span>
                         <span class="text-sm font-semibold text-[#3a3a3a]">{{ submission.language }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <div class="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-4">
                         <span class="text-sm font-semibold text-slate-500">통과 수</span>
                         <span class="text-sm font-semibold text-[#3a3a3a]">{{ submission.passed_count }} / {{ submission.total_count }}</span>
                     </div>

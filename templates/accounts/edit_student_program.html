@@ -5,32 +5,40 @@
 
 {% block content %}
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'student_list' %}">Students</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Update</li>
-    </ol>
-</nav>
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="space-y-8">
+        <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+            <p class="text-sm font-medium text-slate-400 mb-3">
+                <a href="/" class="hover:text-emerald-700 transition">Home</a>
+                <span class="mx-2">/</span>
+                <a href="{% url 'student_list' %}" class="hover:text-emerald-700 transition">Students</a>
+                <span class="mx-2">/</span>
+                <span>Update</span>
+            </p>
+            <h1 class="text-4xl font-semibold text-[#3F3F3F]">Student Program Update Form</h1>
+        </div>
 
-<h4 class="fw-bold mb-3"><i class="fas fa-cog me-2"></i>Student Program Update Form</h4>
+        {% include 'snippets/messages.html' %}
 
-{% include 'snippets/messages.html' %}
-
-<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="card">
-                <p class="form-title">Program</p>
-
-                <div class="card-body">
-                    <p>Change <a href="{{ student.student.get_absolute_url }}">{{ student.student.get_full_name }}'s</a> program</p>
-                    <hr>
+        <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">{% csrf_token %}
+            <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm max-w-3xl">
+                <h2 class="text-2xl font-semibold text-[#3F3F3F] mb-4">Program</h2>
+                <p class="text-slate-500 mb-5">
+                    Change
+                    <a href="{{ student.student.get_absolute_url }}" class="font-semibold text-emerald-700 hover:text-emerald-800 transition">{{ student.student.get_full_name }}</a>
+                    program
+                </p>
+                <div class="space-y-4">
                     {{ form.program }}
                 </div>
             </div>
-        </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    Save
+                </button>
+            </div>
+        </form>
     </div>
-    <input class="btn btn-primary" type="submit" value="Save">
-</form>
+</section>
 {% endblock content %}

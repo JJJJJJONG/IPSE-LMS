@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}IPSE 대시보드{% endblock %}
 
 {% block content %}
-<div class="bg-slate-50 min-h-screen py-10">
-    <div class="max-w-7xl mx-auto px-4">
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-8 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-8 py-7 shadow-sm">
+        <p class="text-xs font-semibold tracking-[0.18em] text-emerald-700">IPSE DASHBOARD</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-800">오늘의 학습 흐름을 한 번에 확인해보세요.</h1>
+        <p class="mt-2 text-sm text-slate-500">프로필, 일정, 공지, 활동 기록이 실시간으로 연결됩니다.</p>
+    </div>
+    <div>
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <div class="space-y-8">
                 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
-                    <div class="h-24 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+                    <div class="h-24 bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-500"></div>
                     <div class="px-6 pb-6 relative">
                         <div class="flex justify-between items-end -mt-12 mb-4 px-6 relative z-10">
                             <div class="relative group cursor-pointer w-24 h-24 rounded-full border-4 border-white shadow-md bg-white flex-shrink-0" id="profile-image-container">
@@ -23,11 +29,11 @@
                                 </button>
                                 <input type="file" id="profile-image-input" class="hidden" accept="image/png, image/jpeg, image/jpg">
                             </div>
-                            <a href="#" id="open-modal-btn" class="px-4 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition shadow-sm mb-2">
+                            <a href="#" id="open-modal-btn" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50 transition mb-2">
                                 프로필 커스텀
                             </a>
                         </div>
-                        <h3 class="text-xl font-black text-slate-800">{{ request.user.username }}</h3>
+                        <h3 class="text-2xl font-semibold text-[#3F3F3F]">{{ request.user.display_name }}</h3>
                         <p class="text-sm text-slate-500 font-medium mt-1">
                             {% if request.user.student and request.user.student.bio %}
                                 {{ request.user.student.bio }}
@@ -37,32 +43,32 @@
                         </p>
                         <div class="flex space-x-3 mt-4">
                             {% if request.user.student and request.user.student.github_url %}
-                            <a href="{{ request.user.student.github_url }}" target="_blank" class="text-slate-400 hover:text-slate-800 transition">
+                            <a href="{{ request.user.student.github_url }}" target="_blank" class="text-slate-400 hover:text-emerald-700 transition">
                                 <i class="fa-brands fa-github text-lg"></i>
                             </a>
                             {% endif %}
                             {% if request.user.student and request.user.student.blog_url %}
-                            <a href="{{ request.user.student.blog_url }}" target="_blank" class="text-slate-400 hover:text-blue-500 transition">
+                            <a href="{{ request.user.student.blog_url }}" target="_blank" class="text-slate-400 hover:text-emerald-700 transition">
                                 <i class="fa-solid fa-link text-lg"></i>
                             </a>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between mt-6 pt-5 border-t border-slate-100 text-center">
                             <div class="flex-1">
-                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">LEVEL</p>
-                                <p class="text-xl font-black text-indigo-600">
-                                    {% if request.user.student %}{{ request.user.student.level }}{% else %}1{% endif %}
+                                <p class="text-[10px] font-semibold text-slate-400 mb-1 tracking-wider">LEVEL</p>
+                                <p class="text-xl font-semibold text-emerald-700">
+                                    {{ learning_level|default:1 }}
                                 </p>
                             </div>
                             <div class="w-px h-8 bg-slate-100"></div>
                             <div class="flex-1">
-                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">POINTS</p>
-                                <p class="text-xl font-black text-slate-700">{{ request.user.total_points|default:"0" }}</p>
+                                <p class="text-[10px] font-semibold text-slate-400 mb-1 tracking-wider">POINTS</p>
+                                <p class="text-xl font-semibold text-[#3F3F3F]">{{ problem_points|default:"0" }}</p>
                             </div>
                             <div class="w-px h-8 bg-slate-100"></div>
                             <div class="flex-1">
-                                <p class="text-[10px] font-black text-slate-400 mb-1 tracking-wider">ALGO</p>
-                                <p class="text-xl font-black text-slate-700">0</p>
+                                <p class="text-[10px] font-semibold text-slate-400 mb-1 tracking-wider">WINS</p>
+                                <p class="text-xl font-semibold text-[#3F3F3F]">{{ contest_wins|default:"0" }}</p>
                             </div>
                         </div>
                     </div>
@@ -70,17 +76,58 @@
 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-black text-slate-800">동아리 일정</h3>
-                        <div class="flex space-x-3 text-xs font-bold">
+                        <h3 class="text-xl font-semibold text-[#3F3F3F]">동아리 일정</h3>
+                        <div class="flex space-x-3 text-xs font-semibold">
                             <span class="flex items-center text-emerald-600">
                                 <div class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></div>공식
                             </span>
-                            <span class="flex items-center text-purple-600">
-                                <div class="w-2 h-2 rounded-full bg-purple-500 mr-1.5"></div>개인
+                            <span class="flex items-center text-amber-600">
+                                <div class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></div>개인
                             </span>
                         </div>
                     </div>
                     <div id="calendar" class="min-h-[400px]"></div>
+                </div>
+
+                <div class="bg-slate-50/80 rounded-2xl border border-slate-200 p-3">
+                    <div class="grid grid-cols-4 gap-3">
+                        <a href="https://cafe.naver.com/cbnuipse"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="h-11 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:text-[#03C75A] hover:border-[#03C75A]/40 transition flex items-center justify-center"
+                           aria-label="네이버 카페">
+                            <span class="text-sm font-black tracking-wide">N</span>
+                        </a>
+
+                        <a href="https://www.instagram.com/cbnu_ipse/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="h-11 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:text-[#E1306C] hover:border-[#E1306C]/40 transition flex items-center justify-center"
+                           aria-label="인스타그램">
+                            <i class="fa-brands fa-instagram text-base"></i>
+                        </a>
+
+                        <a href="https://github.com/ipse-github"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="h-11 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-800 hover:border-slate-400 transition flex items-center justify-center"
+                           aria-label="깃허브">
+                            <i class="fa-brands fa-github text-base"></i>
+                        </a>
+
+                        <a href="https://computer.chungbuk.ac.kr/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="h-11 rounded-md border border-slate-200 bg-slate-50 text-slate-500 hover:text-emerald-700 hover:border-emerald-300 transition flex items-center justify-center"
+                           aria-label="충북대 컴퓨터공학과">
+                            <span class="inline-flex h-7 w-7 rounded-md border border-slate-200 bg-white items-center justify-center overflow-hidden">
+                                <img src="{% static 'img/University-LOGO.png' %}"
+                                     alt="충북대 로고"
+                                     class="h-5 w-5 object-contain"
+                                     style="filter: grayscale(100%) contrast(140%) opacity(0.75);">
+                            </span>
+                        </a>
+                    </div>
                 </div>
 
             </div>
@@ -90,14 +137,14 @@
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <div class="flex justify-between items-center mb-4">
                             <div class="flex items-center space-x-2">
-                                <h3 class="text-lg font-black text-slate-800">새로운 소식</h3>
+                                <h3 class="text-xl font-semibold text-[#3F3F3F]">새로운 소식</h3>
                             </div>
                             </div>
                         
                         <ul class="space-y-3">
                             {% for notice in notices %}
                             <li class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
-                                <a href="{% url 'notice_detail' notice.id %}" class="font-medium text-slate-700 hover:text-indigo-600 transition flex-1 truncate pr-4">
+                                <a href="{% url 'notice_detail' notice.id %}" class="font-medium text-slate-700 hover:text-emerald-700 transition flex-1 truncate pr-4">
                                     <span class="text-emerald-500 text-sm mr-1.5"><i class="fa-solid fa-leaf"></i></span>
                                     {{ notice.title }}
                                 </a>
@@ -122,61 +169,97 @@
                 </div>
                     
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <h3 class="text-lg font-black text-slate-800 mb-6">모든 활동들을 한 눈에 모아보세요.</h3>
-                    <div class="relative pl-4 border-l-2 border-slate-100 space-y-8">
+                    <h3 class="text-xl font-semibold text-[#3F3F3F] mb-6">모든 활동들을 한 눈에 모아보세요.</h3>
+                    <div class="space-y-4">
                         {% for activity in activity_logs %}
-                        <div class="relative">
-                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-indigo-500 rounded-full ring-4 ring-white"></div>
-                            <p class="text-xs font-bold text-slate-400 mb-1">{{ activity.created_at|timesince }} 전</p>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <p class="text-sm font-medium text-slate-700">{{ activity.message }}</p>
+                        <div class="rounded-xl border border-slate-200 bg-white/95 px-4 py-3">
+                            <p class="text-slate-500 font-semibold mb-2">
+                                {% if activity.action_type == 'COURSE' %}
+                                    강의를 완료했습니다.
+                                {% elif activity.action_type == 'PROBLEM' %}
+                                    문제를 해결했습니다.
+                                {% else %}
+                                    활동이 기록되었습니다.
+                                {% endif %}
+                                <span class="text-slate-400 text-sm font-medium ml-2">{{ activity.created_at|timesince }} 전</span>
+                            </p>
+                            <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold text-sm
+                                        {% if activity.action_type == 'PROBLEM' %}
+                                            bg-emerald-100 text-emerald-700
+                                        {% elif activity.action_type == 'COURSE' %}
+                                            bg-teal-100 text-teal-700
+                                        {% else %}
+                                            bg-slate-200 text-slate-600
+                                        {% endif %}
+                                    ">
+                                        {% if activity.action_type == 'PROBLEM' %}
+                                            <i class="fa-solid fa-code"></i>
+                                        {% elif activity.action_type == 'COURSE' %}
+                                            <i class="fa-solid fa-graduation-cap"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-bolt"></i>
+                                        {% endif %}
+                                    </span>
+                                    <p class="truncate text-lg font-semibold text-slate-800">{{ activity.message }}</p>
+                                </div>
+                                <span class="inline-flex items-center rounded-md bg-slate-200/70 px-3 py-1 text-sm font-semibold text-slate-600 shrink-0">
+                                    {% if activity.action_type == 'PROBLEM' %}
+                                        문제
+                                    {% elif activity.action_type == 'COURSE' %}
+                                        학습
+                                    {% else %}
+                                        활동
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                         {% empty %}
-                        <p class="text-center py-10 text-slate-400 text-sm">아직 활동 내역이 없습니다. 학습을 시작해 보세요!</p>
+                        <div class="rounded-md border border-slate-200 bg-slate-50 px-4 py-10 text-center text-slate-400 text-sm">아직 활동 내역이 없습니다. 학습을 시작해 보세요!</div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <div id="schedule-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="schedule-modal-content">
+    <div class="bg-white w-full max-w-md rounded-md border border-slate-200 shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="schedule-modal-content">
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="text-lg font-black text-slate-800">새 일정 추가</h3>
+            <h3 class="text-lg font-semibold text-[#3F3F3F]">새 일정 추가</h3>
             <button type="button" id="close-schedule-modal" class="text-slate-400 hover:text-rose-500 transition">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
         <form id="schedule-form" class="p-6 space-y-4">
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">일정 제목</label>
-                <input type="text" id="sch-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">일정 제목</label>
+                <input type="text" id="sch-title" required class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium">
             </div>
             <div class="flex space-x-4">
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-1">시작 일시</label>
-                    <input type="datetime-local" id="sch-start" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">시작 일시</label>
+                    <input type="datetime-local" id="sch-start" required class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm text-slate-600">
                 </div>
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-1">종료 일시</label>
-                    <input type="datetime-local" id="sch-end" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">종료 일시</label>
+                    <input type="datetime-local" id="sch-end" class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm text-slate-600">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">상세 내용 (선택)</label>
-                <textarea id="sch-desc" rows="2" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">상세 내용 (선택)</label>
+                <textarea id="sch-desc" rows="2" class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium resize-none"></textarea>
             </div>
             {% if user.is_staff %}
             <div class="flex items-center mt-2">
-                <input type="checkbox" id="sch-is-global" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
-                <label for="sch-is-global" class="ml-2 text-sm font-bold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
+                <input type="checkbox" id="sch-is-global" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                <label for="sch-is-global" class="ml-2 text-sm font-semibold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
             </div>
             {% endif %}
             <div class="pt-2">
-                <button type="submit" id="save-sch-btn" class="w-full py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">
+                <button type="submit" id="save-sch-btn" class="w-full py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-md hover:bg-emerald-700 transition">
                     일정 등록하기
                 </button>
             </div>
@@ -185,9 +268,9 @@
 </div>
 
 <div id="edit-schedule-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-schedule-modal-content">
+    <div class="bg-white w-full max-w-md rounded-md border border-slate-200 shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-schedule-modal-content">
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="text-lg font-black text-slate-800">일정 상세</h3>
+            <h3 class="text-lg font-semibold text-[#3F3F3F]">일정 상세</h3>
             <button type="button" id="close-edit-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -195,34 +278,34 @@
         <form id="edit-schedule-form" class="p-6 space-y-4">
             <input type="hidden" id="edit-sch-id">
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">일정 제목</label>
-                <input type="text" id="edit-sch-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">일정 제목</label>
+                <input type="text" id="edit-sch-title" required class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium">
             </div>
             <div class="flex space-x-4">
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-1">시작 일시</label>
-                    <input type="datetime-local" id="edit-sch-start" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">시작 일시</label>
+                    <input type="datetime-local" id="edit-sch-start" required class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm text-slate-600">
                 </div>
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-1">종료 일시</label>
-                    <input type="datetime-local" id="edit-sch-end" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm text-slate-600">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">종료 일시</label>
+                    <input type="datetime-local" id="edit-sch-end" class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm text-slate-600">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">상세 내용</label>
-                <textarea id="edit-sch-desc" rows="2" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-medium resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">상세 내용</label>
+                <textarea id="edit-sch-desc" rows="2" class="w-full px-4 py-2 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium resize-none"></textarea>
             </div>
             {% if user.is_staff %}
             <div class="flex items-center mt-2">
-                <input type="checkbox" id="edit-sch-is-global" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
-                <label for="edit-sch-is-global" class="ml-2 text-sm font-bold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
+                <input type="checkbox" id="edit-sch-is-global" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                <label for="edit-sch-is-global" class="ml-2 text-sm font-semibold text-slate-700">모든 동아리원에게 표시 (공식 일정)</label>
             </div>
             {% endif %}
             <div class="pt-4 flex space-x-3">
-                <button type="button" id="delete-sch-btn" class="w-1/3 py-2.5 bg-rose-50 text-rose-600 border border-rose-100 text-sm font-bold rounded-xl hover:bg-rose-100 transition">
+                <button type="button" id="delete-sch-btn" class="w-1/3 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 text-sm font-semibold rounded-md hover:bg-rose-100 transition">
                     삭제
                 </button>
-                <button type="submit" id="update-sch-btn" class="w-2/3 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">
+                <button type="submit" id="update-sch-btn" class="w-2/3 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-md hover:bg-emerald-700 transition">
                     수정하기
                 </button>
             </div>
@@ -231,9 +314,9 @@
 </div>
 
 <div id="profile-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="profile-modal-content">
+    <div class="bg-white w-full max-w-md rounded-md border border-slate-200 shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="profile-modal-content">
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="text-lg font-black text-slate-800">프로필 커스텀</h3>
+            <h3 class="text-lg font-semibold text-[#3F3F3F]">프로필 커스텀</h3>
             <button type="button" id="close-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -241,19 +324,23 @@
         <form id="profile-update-form" class="p-6 space-y-5">
             {% csrf_token %}
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-2">한 줄 소개 (Bio)</label>
-                <input type="text" id="input-bio" value="{{ request.user.student.bio|default:'' }}" placeholder="자신을 한 줄로 표현해 보세요!" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+                <label class="block text-xs font-semibold text-slate-500 mb-2">닉네임 (Nickname)</label>
+                <input type="text" id="input-nickname" value="{{ request.user.display_name }}" placeholder="사이트에서 표시될 이름" class="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium text-slate-700" maxlength="30">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-2">GitHub 주소</label>
-                <input type="url" id="input-github" value="{{ request.user.student.github_url|default:'' }}" placeholder="https://github.com/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+                <label class="block text-xs font-semibold text-slate-500 mb-2">한 줄 소개 (Bio)</label>
+                <input type="text" id="input-bio" value="{{ request.user.student.bio|default:'' }}" placeholder="자신을 한 줄로 표현해 보세요!" class="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium text-slate-700">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-2">블로그 주소</label>
-                <input type="url" id="input-blog" value="{{ request.user.student.blog_url|default:'' }}" placeholder="https://velog.io/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-700">
+                <label class="block text-xs font-semibold text-slate-500 mb-2">GitHub 주소</label>
+                <input type="url" id="input-github" value="{{ request.user.student.github_url|default:'' }}" placeholder="https://github.com/..." class="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium text-slate-700">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-2">블로그 주소</label>
+                <input type="url" id="input-blog" value="{{ request.user.student.blog_url|default:'' }}" placeholder="https://velog.io/..." class="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-sm font-medium text-slate-700">
             </div>
             <div class="pt-4 flex justify-end">
-                <button type="submit" id="save-profile-btn" class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-md w-full">
+                <button type="submit" id="save-profile-btn" class="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-md hover:bg-emerald-700 transition w-full">
                     저장하고 반영하기
                 </button>
             </div>
@@ -277,10 +364,10 @@
     .fc-day-sun .fc-daygrid-day-number, .fc-day-sun .fc-col-header-cell-cushion { color: #ef4444 !important; }
     .fc-day-sat .fc-daygrid-day-number, .fc-day-sat .fc-col-header-cell-cushion { color: #3b82f6 !important; }
 
-    /* 오늘 날짜 (파란색 원) */
+    /* 오늘 날짜 */
     .fc-day-today { background-color: transparent !important; }
     .fc-day-today .fc-daygrid-day-number {
-        background-color: #3b82f6 !important; color: white !important; border-radius: 50%;
+        background-color: #059669 !important; color: white !important; border-radius: 50%;
         width: 26px !important; height: 26px !important; display: inline-flex !important; 
         align-items: center !important; justify-content: center !important; margin-top: 0 !important;
     }
@@ -317,8 +404,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // 💡 수정된 eventContent 함수
         eventContent: function(arg) {
             const isGlobal = arg.event.extendedProps.is_global;
-            // 공식(초록색), 개인(보라색) Tailwind 클래스 매핑
-            const bgColorClass = isGlobal ? 'bg-emerald-500' : 'bg-purple-500';
+            // 공식(초록색), 개인(주황색) Tailwind 클래스 매핑
+            const bgColorClass = isGlobal ? 'bg-emerald-500' : 'bg-amber-500';
             
             // 너비 83%(w-10/12), 두께 6px(h-1.5), 가운데 정렬(mx-auto)을 적용한 선형 HTML 반환
             return { html: `<div class="w-10/12 h-1.5 rounded-full ${bgColorClass} mx-auto"></div>` };
@@ -545,6 +632,7 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.disabled = true;
 
         const data = {
+            nickname: document.getElementById('input-nickname').value,
             bio: document.getElementById('input-bio').value,
             github_url: document.getElementById('input-github').value,
             blog_url: document.getElementById('input-blog').value,

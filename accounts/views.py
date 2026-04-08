@@ -5,7 +5,11 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+from django.core.mail import BadHeaderError
 from .models import Student
+from .forms import EmailValidationOnForgotPassword
 
 
 def register(request):
@@ -24,6 +28,25 @@ def register(request):
 
     return render(request, 'registration/register.html', {'form': form})
 
+
+class UserPasswordResetView(PasswordResetView):
+    template_name = "registration/password_reset.html"
+    email_template_name = "registration/password_reset_email.txt"
+    html_email_template_name = "registration/password_reset_email_html.html"
+    subject_template_name = "registration/password_reset_subject.txt"
+    form_class = EmailValidationOnForgotPassword
+    success_url = reverse_lazy("password_reset_done")
+
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except (ConnectionError, TimeoutError, OSError, BadHeaderError):
+            messages.error(
+                self.request,
+                "이메일 전송에 실패했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요.",
+            )
+            return self.form_invalid(form)
+
 @login_required
 @require_POST
 def update_profile_api(request):
@@ -36,6 +59,11 @@ def update_profile_api(request):
         student, created = Student.objects.get_or_create(student=request.user)
         
         # 3. 데이터 업데이트
+        nickname = data.get('nickname', student.nickname).strip()
+        if len(nickname) > 30:
+            return JsonResponse({"status": "error", "message": "닉네임은 30자 이하로 입력해주세요."}, status=400)
+
+        student.nickname = nickname
         student.bio = data.get('bio', student.bio)
         student.github_url = data.get('github_url', student.github_url)
         student.blog_url = data.get('blog_url', student.blog_url)

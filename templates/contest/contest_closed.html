@@ -5,25 +5,25 @@
 <section class="max-w-7xl mx-auto px-6 py-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8 space-y-8">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                     <div>
                         <div class="flex items-center gap-3 mb-4">
-                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium
+                            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border
                                 {% if contest.status_label == '진행 중' %}
-                                    bg-green-100 text-green-700
+                                    bg-emerald-50 text-emerald-700 border-emerald-100
                                 {% elif contest.status_label == '동결 중' %}
-                                    bg-amber-100 text-amber-700
+                                    bg-amber-50 text-amber-700 border-amber-100
                                 {% elif contest.status_label == '예정' %}
-                                    bg-emerald-100 text-emerald-700
+                                    bg-slate-100 text-slate-700 border-slate-200
                                 {% else %}
-                                    bg-slate-100 text-slate-600
+                                    bg-slate-100 text-slate-500 border-slate-200
                                 {% endif %}
                             ">
                                 {{ contest.status_label }}
                             </span>
 
-                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-rose-100 text-rose-700">
+                            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border bg-rose-50 text-rose-700 border-rose-100">
                                 현재 입장/제출 불가
                             </span>
                         </div>
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="shrink-0">
-                        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5 min-w-[220px]">
+                        <div class="rounded-md bg-slate-50 border border-slate-200 p-5 min-w-[220px]">
                             <p class="text-sm font-medium text-slate-400 mb-2">현재 상태</p>
                             <p class="text-lg font-semibold text-[#3F3F3F] mb-4">{{ contest.status_label }}</p>
 
@@ -50,36 +50,36 @@
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <h2 class="text-2xl font-semibold text-[#3F3F3F] mb-6">대회 일정</h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                    <div class="rounded-md bg-slate-50 border border-slate-200 p-5">
                         <p class="text-sm font-medium text-slate-400 mb-2">시작 시간</p>
                         <p class="text-lg font-semibold text-[#3F3F3F]">{{ contest.start_time }}</p>
                     </div>
 
-                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                    <div class="rounded-md bg-slate-50 border border-slate-200 p-5">
                         <p class="text-sm font-medium text-slate-400 mb-2">종료 시간</p>
                         <p class="text-lg font-semibold text-[#3F3F3F]">{{ contest.end_time }}</p>
                     </div>
 
-                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                    <div class="rounded-md bg-slate-50 border border-slate-200 p-5">
                         <p class="text-sm font-medium text-slate-400 mb-2">스코어보드 동결</p>
                         <p class="text-lg font-semibold text-[#3F3F3F]">{{ contest.freeze_minutes }}분 전 시작</p>
                     </div>
 
-                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+                    <div class="rounded-md bg-slate-50 border border-slate-200 p-5">
                         <p class="text-sm font-medium text-slate-400 mb-2">안내</p>
                         <p class="text-lg font-semibold text-[#3F3F3F]">대회 시간 외 접근 제한</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <h2 class="text-2xl font-semibold text-[#3F3F3F] mb-6">안내 문구</h2>
 
-                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-6 text-slate-700 leading-8">
+                <div class="rounded-md bg-slate-50 border border-slate-200 p-6 text-slate-700 leading-8">
                     <p>대회는 시작 시간 이후부터 입장할 수 있습니다.</p>
                     <p>대회 종료 후에는 제출이 불가능합니다.</p>
                     <p>스코어보드는 대회 상태에 따라 계속 확인할 수 있습니다.</p>
@@ -88,22 +88,22 @@
         </div>
 
         <div class="lg:col-span-4">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm sticky top-24">
-                <h2 class="text-3xl font-semibold text-[#3F3F3F] mb-8">대회 메뉴</h2>
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm sticky top-24">
+                <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-8">대회 메뉴</h2>
 
                 <div class="space-y-4">
                     <a href="{% url 'contest:detail' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         대회 상세 보기
                     </a>
 
-                    <a href="{% url 'contest:scoreboard' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-transparent text-[#2f2f2f] text-base font-semibold hover:bg-slate-800 transition">
+                    <a href="{% url 'ranking:home' %}?board=contest&season={{ contest.pk }}"
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         스코어보드 보기
                     </a>
 
                     <a href="{% url 'contest:list' %}"
-                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
                         대회 목록으로
                     </a>
                 </div>

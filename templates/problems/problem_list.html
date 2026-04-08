@@ -1,8 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
+<div class="max-w-7xl mx-auto px-4 py-12 space-y-6">
+    <section class="rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-7 py-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+            <div>
+                <p class="text-xs font-bold tracking-[0.18em] text-emerald-600 uppercase mb-3">Problem Hub</p>
+                <h1 class="text-4xl font-semibold tracking-[-0.03em] text-slate-800 mb-3">문제 풀이</h1>
+                <p class="text-slate-500 leading-7">기초부터 실전까지, 원하는 문제를 빠르게 찾고 바로 풀이해보세요.</p>
+            </div>
 
-    <div class="flex-grow space-y-8">
+            <div class="grid grid-cols-2 gap-3 w-full lg:w-auto">
+                <div class="rounded-xl border border-slate-200 bg-white/80 px-5 py-4">
+                    <p class="text-xs font-semibold text-slate-400 mb-1">총 문제</p>
+                    <p class="text-2xl font-semibold text-slate-800">{{ problems|length }}</p>
+                </div>
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/90 px-5 py-4">
+                    <p class="text-xs font-semibold text-emerald-700 mb-1">현재 필터</p>
+                    <p class="text-2xl font-semibold text-emerald-700">{{ current_q|default:"ALL"|truncatechars:8 }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+
+    <div class="flex-grow space-y-6">
 
         <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <div class="space-y-6">
@@ -12,46 +34,46 @@
                     <input type="hidden" name="difficulty" value="{{ current_difficulty|default:'' }}">
                     <input type="hidden" name="sort" value="{{ current_sort|default:'newest' }}">
 
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400"></i>
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" name="q" value="{{ current_q|default:'' }}" placeholder="찾고 싶은 문제를 검색하세요."
-                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none transition">
+                        class="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
                 </form>
 
-                <div class="flex items-center space-x-4 overflow-x-auto pb-2">
+                <div class="flex flex-wrap items-center gap-3 pb-1">
                     <span class="text-sm font-bold text-slate-500 shrink-0">분야</span>
 
                     <a href="?q={{ current_q|default:'' }}&difficulty={{ current_difficulty|default:'' }}&sort={{ current_sort|default:'newest' }}"
-                        class="px-4 py-1.5 rounded-full border text-sm font-bold transition whitespace-nowrap
-                              {% if not current_category %} bg-blue-600 text-white border-blue-600 
-                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        class="px-4 h-9 inline-flex items-center rounded-full border text-sm font-bold transition whitespace-nowrap
+                            {% if not current_category %} bg-emerald-600 text-white border-emerald-600 shadow-sm
+                            {% else %} bg-white text-slate-600 border-slate-200 hover:border-emerald-500 {% endif %}">
                         모든 분야
                     </a>
 
                     {% for cat in categories %}
                     <a href="?category={{ cat.id }}&q={{ current_q|default:'' }}&difficulty={{ current_difficulty|default:'' }}&sort={{ current_sort|default:'newest' }}"
-                        class="px-4 py-1.5 rounded-full border text-sm font-bold transition whitespace-nowrap
-                              {% if current_category == cat.id|stringformat:'s' %} bg-blue-600 text-white border-blue-600 
-                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        class="px-4 h-9 inline-flex items-center rounded-full border text-sm font-bold transition whitespace-nowrap
+                              {% if current_category == cat.id|stringformat:'s' %} bg-emerald-600 text-white border-emerald-600 shadow-sm
+                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-emerald-500 {% endif %}">
                         {{ cat.title }}
                     </a>
                     {% endfor %}
                 </div>
 
-                <div class="flex items-center space-x-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <span class="text-sm font-bold text-slate-500 mr-2">난이도</span>
 
                     <a href="?q={{ current_q|default:'' }}&category={{ current_category|default:'' }}&sort={{ current_sort|default:'newest' }}"
-                        class="px-3 py-1 rounded-full border text-xs font-bold transition
-                              {% if not current_difficulty %} bg-blue-100 text-blue-600 border-blue-200
-                              {% else %} bg-white text-slate-500 border-slate-200 hover:border-blue-500 {% endif %}">
+                        class="px-3 py-1.5 rounded-full border text-xs font-bold transition
+                            {% if not current_difficulty %} bg-emerald-100 text-emerald-600 border-emerald-200
+                            {% else %} bg-white text-slate-500 border-slate-200 hover:border-emerald-500 {% endif %}">
                         전체
                     </a>
 
                     {% for i in "1234567890" %}
                     <a href="?difficulty={{ forloop.counter }}&q={{ current_q|default:'' }}&category={{ current_category|default:'' }}&sort={{ current_sort|default:'newest' }}"
-                        class="w-8 h-8 flex items-center justify-center rounded-full border text-xs font-bold transition
-                              {% if current_difficulty == forloop.counter|stringformat:'s' %} bg-blue-600 text-white border-blue-600
-                              {% else %} bg-white text-slate-600 border-slate-200 hover:border-blue-500 {% endif %}">
+                        class="w-9 h-9 flex items-center justify-center rounded-full border text-xs font-bold transition
+                            {% if current_difficulty == forloop.counter|stringformat:'s' %} bg-emerald-600 text-white border-emerald-600
+                            {% else %} bg-white text-slate-600 border-slate-200 hover:border-emerald-500 {% endif %}">
                         {{ forloop.counter }}
                     </a>
                     {% endfor %}
@@ -61,7 +83,7 @@
 
         <div class="flex justify-between items-center px-2">
             <span class="text-sm font-medium text-slate-500">
-                총 <span class="font-bold text-blue-600">{{ problems|length }}</span>개의 문제가 있습니다.
+                총 <span class="font-bold text-emerald-600">{{ problems|length }}</span>개의 문제가 있습니다.
             </span>
 
             <form method="GET" action="{% url 'problem_list' %}" class="flex items-center">
@@ -70,20 +92,17 @@
                 <input type="hidden" name="difficulty" value="{{ current_difficulty|default:'' }}">
 
                 <select name="sort" onchange="this.form.submit()"
-                    class="text-sm font-bold border-slate-200 rounded-lg text-slate-600 focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 shadow-sm cursor-pointer outline-none transition">
+                    class="h-10 text-sm font-bold border-slate-200 rounded-xl bg-white text-slate-600 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 py-2 pl-3 pr-8 shadow-sm cursor-pointer outline-none transition">
                     <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>최신순</option>
-                    <option value="most_solved" {% if current_sort == 'most_solved' %}selected{% endif %}>풀이자 많은 순
-                    </option>
-                    <option value="least_solved" {% if current_sort == 'least_solved' %}selected{% endif %}>풀이자 적은 순
-                    </option>
+                    <option value="most_solved" {% if current_sort == 'most_solved' %}selected{% endif %}>풀이자 많은 순</option>
+                    <option value="least_solved" {% if current_sort == 'least_solved' %}selected{% endif %}>풀이자 적은 순</option>
                 </select>
             </form>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <table class="w-full text-left">
-                <thead
-                    class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-black uppercase tracking-wider">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-black uppercase tracking-wider">
                     <tr>
                         <th class="px-6 py-4">문제 정보</th>
                         <th class="px-6 py-4 text-center">분야</th>
@@ -93,34 +112,40 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     {% for problem in problems %}
-                    <tr class="hover:bg-slate-50 transition cursor-pointer group"
+                    <tr class="hover:bg-slate-50/80 transition cursor-pointer group"
                         onclick="location.href='{{ problem.get_absolute_url }}'">
-                
+
                         <td class="px-6 py-5">
-                            <div class="flex items-center space-x-3">
-                                <span
-                                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
-                                    {{ problem.difficulty }}
+                            <div class="flex items-center gap-4">
+                                <span class="inline-flex h-8 min-w-8 px-2 items-center justify-center rounded-md bg-slate-100 text-xs font-bold text-slate-500 shrink-0">
+                                    {{ forloop.counter }}
                                 </span>
-                
-                                <span class="font-bold text-slate-800 group-hover:text-blue-600 transition">
-                                    {{ problem.title }}
-                                </span>
+
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-nowrap">
+                                        <span class="text-[1.05rem] font-semibold text-slate-800 truncate">{{ problem.title }}</span>
+                                        {% if problem.is_solved %}
+                                        <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-xs">
+                                            <i class="fa-solid fa-check"></i>
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </td>
-                
-                        <td class="px-6 py-5 text-center">
-                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">
-                                {{ problem.category.title }}
+
+                        <td class="px-6 py-6 text-center">
+                            <span class="inline-block whitespace-nowrap px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">
+                                {% if problem.category %}{{ problem.category.title }}{% else %}미분류{% endif %}
                             </span>
                         </td>
-                
-                        <td class="px-6 py-5 text-center font-bold text-slate-600">
+
+                        <td class="px-6 py-6 text-center font-bold text-slate-600">
                             {{ problem.solve_count|default:"0" }}
                         </td>
-                
-                        <td class="px-6 py-5 text-center text-sm font-medium text-slate-500">
-                            {{ problem.author.username }}
+
+                        <td class="px-6 py-6 text-center text-sm font-medium text-slate-500">
+                            {{ problem.author.display_name }}
                         </td>
                     </tr>
                     {% empty %}
@@ -135,28 +160,36 @@
         </div>
     </div>
 
-<aside class="w-full lg:w-80 space-y-6">
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-        <h3 class="text-lg font-black text-slate-800 mb-6">IPSE 실시간 랭킹</h3>
-        <div class="space-y-5">
-            {% for ranker in top_rankers %}
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <span
-                        class="text-xs font-black {% if forloop.counter <= 3 %}text-blue-600{% else %}text-slate-400{% endif %}">
-                        {{forloop.counter }}
-                    </span>
-                    <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+    <aside class="w-full lg:w-80 space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 class="text-lg font-black text-slate-800 mb-6">IPSE 실시간 랭킹</h3>
+
+            <div class="space-y-5">
+                {% for ranker in top_rankers %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <span class="w-5 text-sm font-black {% if forloop.counter == 1 %}text-emerald-600{% elif forloop.counter == 2 %}text-emerald-500{% elif forloop.counter == 3 %}text-slate-500{% else %}text-slate-400{% endif %}">
+                            {{ forloop.counter }}
+                        </span>
+
+                        <img src="{{ ranker.get_picture }}"
+                             alt="{{ ranker.display_name }}"
+                             class="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0">
+
+                        <span class="text-base font-bold text-slate-700 truncate">
+                            {{ ranker.display_name }}
+                        </span>
                     </div>
-                    <span class="text-sm font-bold text-slate-700">{{ ranker.username }}</span>
+
+                    <span class="text-base font-black text-emerald-600 shrink-0">
+                        {{ ranker.problem_score }}
+                    </span>
                 </div>
-                <span class="text-sm font-black text-blue-600">{{ ranker.total_points }}</span>
+                {% empty %}
+                <p class="text-sm text-slate-500 text-center">아직 랭킹 데이터가 없습니다.</p>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p class="text-sm text-slate-500 text-center">아직 랭킹 데이터가 없습니다.</p>
-            {% endfor %}
         </div>
-    </div>
-</aside>
+    </aside>
 </div>
 {% endblock %}

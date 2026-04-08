@@ -2,21 +2,37 @@
 {% block title %}{{ notice.title }} - IPSE{% endblock %}
 
 {% block content %}
-<div class="bg-slate-50 min-h-screen py-10">
-    <div class="max-w-4xl mx-auto px-4 relative">
+<section class="max-w-5xl mx-auto px-6 py-12">
+    <div class="relative space-y-6">
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-md text-sm font-bold border
+                {% if message.tags == 'error' %}
+                    bg-red-50 text-red-600 border-red-200
+                {% elif message.tags == 'success' %}
+                    bg-emerald-50 text-emerald-700 border-emerald-200
+                {% else %}
+                    bg-slate-50 text-slate-600 border-slate-200
+                {% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         
         <div class="mb-6">
-            <a href="{% url 'community_main' %}" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition flex items-center">
+            <a href="{% url 'community_main' %}" class="text-sm font-semibold text-slate-500 hover:text-emerald-700 transition inline-flex items-center">
                 <i class="fa-solid fa-arrow-left mr-2"></i> 공지사항 목록으로
             </a>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 mb-8 relative">
+        <div class="bg-white border border-slate-200 rounded-2xl p-10 shadow-sm relative">
             <div class="border-b border-slate-100 pb-6 mb-8">
                 <div class="flex items-center space-x-2 mb-3">
-                    <span class="px-2 py-0.5 bg-blue-50 text-blue-500 text-[10px] font-black rounded">Dreamhack 벤치마크</span>
+                    <span class="px-3 py-1 rounded-md bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">공지사항</span>
                 </div>
-                <h1 class="text-3xl font-black text-slate-800 mb-4">{{ notice.title }}</h1>
+                <h1 class="text-4xl font-semibold text-[#3F3F3F] mb-4">{{ notice.title }}</h1>
                 <div class="flex items-center text-sm font-medium text-slate-400 space-x-4">
                     <span class="flex items-center"><i class="fa-solid fa-user mr-1.5"></i> IPSE 관리자</span>
                     <span class="flex items-center"><i class="fa-regular fa-clock mr-1.5"></i> {{ notice.upload_time|date:"Y.m.d H:i" }}</span>
@@ -29,12 +45,12 @@
             
             {% if user.is_staff %}
             <div class="absolute bottom-6 right-8 flex space-x-3">
-                <button type="button" id="open-edit-modal-btn" class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-200 transition">
+                <button type="button" id="open-edit-modal-btn" class="px-5 py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
                     수정
                 </button>
                 <form action="{% url 'delete_post' notice.id %}" method="POST" onsubmit="return confirm('이 공지사항을 정말 삭제하시겠습니까?');">
                     {% csrf_token %}
-                    <button type="submit" class="px-4 py-2 bg-rose-50 text-rose-600 text-sm font-bold rounded-lg hover:bg-rose-100 transition">
+                    <button type="submit" class="px-5 py-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-sm font-semibold hover:bg-rose-100 transition">
                         삭제
                     </button>
                 </form>
@@ -42,15 +58,79 @@
             {% endif %}
         </div>
 
+        <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-5">
+            <div class="flex items-end justify-between border-b border-slate-200 pb-3">
+                <h2 class="text-2xl font-semibold text-[#3F3F3F]">댓글</h2>
+                <span class="text-sm font-medium text-slate-400">{{ comments|length }}개</span>
+            </div>
+
+            <form method="POST" action="{% url 'notice_detail' notice.id %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_comment">
+                <textarea name="content" rows="4" placeholder="공지사항 관련 의견을 남겨주세요." class="w-full px-4 py-4 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:border-emerald-500"></textarea>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-lg text-sm font-bold transition">댓글 등록</button>
+                </div>
+            </form>
+
+            <div class="space-y-4">
+                {% for comment in comments %}
+                <div class="p-5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between gap-4 mb-3">
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ comment.author.get_picture }}" alt="{{ comment.author.username }}" class="w-10 h-10 rounded-full object-cover border border-slate-200">
+                            <div>
+                                <p class="font-bold text-sm text-slate-700">{{ comment.author.username }}</p>
+                                <p class="text-xs text-slate-400">{{ comment.created_at|date:"Y.m.d. H:i" }}</p>
+                            </div>
+                        </div>
+
+                        {% if user == comment.author or user.is_staff and not comment.author.is_staff %}
+                        <div class="flex items-center gap-2">
+                            {% if user == comment.author %}
+                            <button type="button" data-notice-comment-toggle="{{ comment.id }}" class="text-xs font-bold text-emerald-700 border border-emerald-200 bg-emerald-50 px-3 py-1 rounded-lg hover:bg-emerald-100 transition">수정</button>
+                            {% endif %}
+
+                            <form method="POST" action="{% url 'notice_detail' notice.id %}" onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_comment">
+                                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                <button type="submit" class="text-xs font-bold text-rose-700 border border-rose-200 bg-rose-50 px-3 py-1 rounded-lg hover:bg-rose-100 transition">삭제</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-sm leading-7 text-slate-600 whitespace-pre-wrap">{{ comment.content }}</p>
+
+                    {% if user == comment.author %}
+                    <form id="notice-comment-edit-{{ comment.id }}" method="POST" action="{% url 'notice_detail' notice.id %}" class="hidden mt-4 space-y-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="edit_comment">
+                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                        <textarea name="content" rows="3" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:border-emerald-500">{{ comment.content }}</textarea>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" data-notice-comment-toggle="{{ comment.id }}" class="px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition">취소</button>
+                            <button type="submit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition">저장</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="text-sm text-slate-500">아직 등록된 댓글이 없습니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
-</div>
+</section>
 
 {% if user.is_staff %}
 <div id="edit-modal" class="fixed inset-0 z-[9999] hidden bg-slate-900/40 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 opacity-0">
-    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden transform scale-95 transition-transform duration-300 border border-slate-200" id="edit-modal-content">
         
         <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="text-xl font-black text-slate-800">공지사항 수정</h3>
+            <h3 class="text-xl font-semibold text-[#3F3F3F]">공지사항 수정</h3>
             <button type="button" id="close-edit-modal-btn" class="text-slate-400 hover:text-rose-500 transition">
                 <i class="fa-solid fa-xmark text-2xl"></i>
             </button>
@@ -59,19 +139,19 @@
         <form id="edit-form" action="{% url 'edit_post' notice.id %}" method="POST" class="p-8">
             {% csrf_token %}
             <div class="mb-5">
-                <label class="block text-sm font-bold text-slate-700 mb-2">제목</label>
-                <input type="text" name="title" value="{{ notice.title }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-slate-700 font-medium transition">
+                <label class="block text-sm font-semibold text-slate-600 mb-2">제목</label>
+                <input type="text" name="title" value="{{ notice.title }}" required class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none text-slate-700 font-medium transition">
             </div>
 
             <input type="hidden" name="summary" id="hidden-edit-content">
 
             <div class="mb-6">
-                <label class="block text-sm font-bold text-slate-700 mb-2">내용</label>
+                <label class="block text-sm font-semibold text-slate-600 mb-2">내용</label>
                 <div id="editor"></div>
             </div>
 
             <div class="flex justify-end pt-4 border-t border-slate-100">
-                <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-md">
+                <button type="submit" class="px-8 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">
                     수정 완료
                 </button>
             </div>
@@ -95,74 +175,82 @@ document.addEventListener('DOMContentLoaded', function() {
         initialValue: noticeContent
     });
 
-    {% if user.is_staff %}
     const editModal = document.getElementById('edit-modal');
     const editModalContent = document.getElementById('edit-modal-content');
     const openEditBtn = document.getElementById('open-edit-modal-btn');
     const closeEditBtn = document.getElementById('close-edit-modal-btn');
     const editForm = document.getElementById('edit-form');
     
-    let editor; 
+    let editor;
 
-    // 💡 이미지 가로채기 훅(Hook) 함수 추가
-    const imageUploadHook = (blob, callback) => {
-        const formData = new FormData();
-        formData.append('image', blob);
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    if (editModal && editModalContent && openEditBtn && closeEditBtn && editForm) {
+        const imageUploadHook = (blob, callback) => {
+            const formData = new FormData();
+            formData.append('image', blob);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch('/community/upload-image/', {
-            method: 'POST',
-            headers: {'X-CSRFToken': csrfToken},
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.url) {
-                callback(data.url, '업로드된 이미지');
-            } else {
-                alert('이미지 업로드 실패');
+            fetch('/community/upload-image/', {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrfToken},
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    callback(data.url, '업로드된 이미지');
+                } else {
+                    alert('이미지 업로드 실패');
+                }
+            });
+        };
+
+        openEditBtn.addEventListener('click', () => {
+            editModal.classList.remove('hidden');
+            
+            if (!editor) {
+                editor = new toastui.Editor({
+                    el: document.querySelector('#editor'),
+                    height: '400px',
+                    initialEditType: 'markdown',
+                    previewStyle: 'vertical',
+                    initialValue: noticeContent,
+                    language: 'ko',
+                    hooks: { addImageBlobHook: imageUploadHook }
+                });
+            }
+
+            setTimeout(() => {
+                editModal.classList.remove('opacity-0');
+                editModalContent.classList.remove('scale-95');
+            }, 10);
+        });
+
+        closeEditBtn.addEventListener('click', () => {
+            editModal.classList.add('opacity-0');
+            editModalContent.classList.add('scale-95');
+            setTimeout(() => editModal.classList.add('hidden'), 300);
+        });
+
+        editForm.addEventListener('submit', function(e) {
+            const updatedContent = editor.getMarkdown();
+            document.getElementById('hidden-edit-content').value = updatedContent;
+            
+            if (!updatedContent.trim()) {
+                e.preventDefault();
+                alert('내용을 입력해 주세요.');
             }
         });
-    };
+    }
 
-    openEditBtn?.addEventListener('click', () => {
-        editModal.classList.remove('hidden');
-        
-        if (!editor) {
-            editor = new toastui.Editor({
-                el: document.querySelector('#editor'),
-                height: '400px',
-                initialEditType: 'markdown',
-                previewStyle: 'vertical',
-                initialValue: noticeContent,
-                language: 'ko',
-                // 💡 수정 모드 에디터에도 훅 적용!
-                hooks: { addImageBlobHook: imageUploadHook }
-            });
-        }
-
-        setTimeout(() => {
-            editModal.classList.remove('opacity-0');
-            editModalContent.classList.remove('scale-95');
-        }, 10);
+    document.querySelectorAll('[data-notice-comment-toggle]').forEach((button) => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-notice-comment-toggle');
+            const form = document.getElementById(`notice-comment-edit-${commentId}`);
+            if (form) {
+                form.classList.toggle('hidden');
+            }
+        });
     });
-
-    closeEditBtn?.addEventListener('click', () => {
-        editModal.classList.add('opacity-0');
-        editModalContent.classList.add('scale-95');
-        setTimeout(() => editModal.classList.add('hidden'), 300);
-    });
-
-    editForm?.addEventListener('submit', function(e) {
-        const updatedContent = editor.getMarkdown();
-        document.getElementById('hidden-edit-content').value = updatedContent;
-        
-        if (!updatedContent.trim()) {
-            e.preventDefault();
-            alert('내용을 입력해 주세요.');
-        }
-    });
-    {% endif %}
 });
 </script>
 {% endblock %}

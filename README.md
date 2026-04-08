@@ -44,3 +44,25 @@
 | 이름       | 담당 업무                       | 세부 역할                                                                                                                                                              |
 | ---------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **박종은** | 아키텍처 설계 및 풀스택 개발 | 프로젝트 인프라 초기 세팅, 데이터베이스 구조 설계 (Custom User, Course, Progress), Tailwind CSS 기반의 프론트엔드 연동 및 GNB/대시보드 UI 구현, 깃허브 버전 관리 총괄 |
+
+## 이메일(비밀번호 재설정) 설정
+
+비밀번호 재설정 메일 발송을 위해 아래 환경 변수를 `.env`에 설정합니다.
+
+- `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend`
+- `EMAIL_HOST=smtp.gmail.com`
+- `EMAIL_PORT=587`
+- `EMAIL_USE_TLS=True`
+- `EMAIL_USE_SSL=False`
+- `EMAIL_HOST_USER=발신 이메일`
+- `EMAIL_HOST_PASSWORD=앱 비밀번호`
+- `EMAIL_FROM_ADDRESS=발신 이메일`
+- `EMAIL_TIMEOUT=30`
+- `PASSWORD_RESET_TIMEOUT=86400`
+
+동작 확인 절차
+
+1. `python manage.py runserver 0.0.0.0:8000`
+2. 로그인 페이지에서 "비밀번호를 잊으셨나요?" 클릭
+3. 가입된 이메일 입력 후 전송
+4. 수신 메일의 링크로 새 비밀번호 설정

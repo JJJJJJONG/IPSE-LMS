@@ -2,78 +2,222 @@
 {% block title %}{{ problem.title }} - IPSE AI Academy{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
-    
-    <div class="flex-grow space-y-8 lg:w-2/3">
-        
+<div class="max-w-7xl mx-auto px-4 py-12 space-y-6">
+    <section class="rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-7 py-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+                <p class="text-xs font-bold tracking-[0.18em] text-emerald-600 uppercase mb-3">Problem Detail</p>
+                <h1 class="text-3xl lg:text-4xl font-semibold tracking-[-0.03em] text-slate-800 mb-3">{{ problem.title }}</h1>
+                <p class="text-slate-500">문제를 이해하고, 테스트하고, 바로 제출해 결과를 확인하세요.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 w-full lg:w-auto">
+                <div class="rounded-xl border border-slate-200 bg-white/80 px-5 py-4">
+                    <p class="text-xs font-semibold text-slate-400 mb-1">난이도</p>
+                    <p class="text-2xl font-semibold text-slate-800">Lv.{{ problem.difficulty }}</p>
+                </div>
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/90 px-5 py-4">
+                    <p class="text-xs font-semibold text-emerald-700 mb-1">총 풀이 수</p>
+                    <p class="text-2xl font-semibold text-emerald-700">{{ solvers_count }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if messages %}
+    <div class="space-y-2">
+        {% for message in messages %}
+        <div class="p-4 rounded-xl text-sm font-bold border
+            {% if message.tags == 'error' %}
+                bg-red-50 text-red-600 border-red-200
+            {% elif message.tags == 'success' %}
+                bg-emerald-50 text-emerald-700 border-emerald-200
+            {% else %}
+                bg-slate-50 text-slate-600 border-slate-200
+            {% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="max-w-7xl mx-auto px-4 pb-12 flex flex-col lg:flex-row gap-8">
+    <div class="flex-grow space-y-6 lg:w-2/3">
         <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
             <div class="flex justify-between items-start mb-6">
                 <h2 class="text-lg font-black text-slate-800">문제 설명</h2>
-                
-                <div class="relative group">
-                    <button class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center space-x-2 hover:bg-indigo-100 transition">
-                        <i class="fa-solid fa-download"></i>
-                        <span>문제 파일 받기 ({{ attachments|length }})</span>
-                    </button>
-                    <div class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                        {% for att in attachments %}
-                        <a href="{{ att.file.url }}" download class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b last:border-b-0">
-                            {{ att.filename }}
-                        </a>
-                        {% empty %}
-                        <span class="block px-4 py-2 text-sm text-slate-500">첨부파일이 없습니다.</span>
-                        {% endfor %}
+                {% if user.is_staff %}
+                <button type="button" id="toggle-description-btn" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
+                    편집
+                </button>
+                {% endif %}
+            </div>
+
+            <div id="description-view" class="text-slate-700 whitespace-pre-line leading-8 min-h-[120px]">
+                {{ problem.description|default:"등록된 문제 설명이 없습니다." }}
+            </div>
+
+            {% if user.is_staff %}
+            <form id="description-form" method="POST" action="{% url 'problem_detail' problem.pk %}" class="hidden space-y-3 mt-2">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_description">
+                <textarea name="description" rows="8" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">{{ problem.description }}</textarea>
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancel-description-btn" class="px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition">취소</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition">저장</button>
+                </div>
+            </form>
+            {% endif %}
+        </section>
+
+            <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-800">온라인 컴파일러</h2>
+                        <p class="text-sm text-slate-400 mt-1">코드 테스트용 에디터입니다.</p>
                     </div>
                 </div>
-            </div>
-            
-            <div class="prose max-w-none text-slate-600 whitespace-pre-wrap">
-                {{ problem.description }}
-            </div>
-        </section>
 
-        <section class="bg-slate-100 p-8 rounded-2xl border border-dashed border-slate-300 flex items-center justify-center min-h-[150px]">
-            <span class="text-slate-400 font-bold text-xl tracking-widest uppercase">Tools Online Compiler (나중에 추가)</span>
-        </section>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
+                        <select class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">
+                            <option>Python</option>
+                            <option>C++</option>
+                            <option>Java</option>
+                        </select>
 
-        <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-indigo-500">
-            <h3 class="text-indigo-600 font-bold mb-4 flex items-center space-x-2">
-                <i class="fa-regular fa-flag"></i>
-                <span>Flag 입력</span>
-            </h3>
-            
-            {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                <div class="p-3 rounded-lg text-sm font-bold {% if message.tags == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">
-                    {{ message }}
+                        <input type="text"
+                            placeholder="입력값 테스트 (선택)"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">
+                    </div>
+
+                    <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-900">
+                        <div class="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-[0.15em]">Editor</span>
+                            <span class="text-xs text-slate-400">main.py</span>
+                        </div>
+                        <textarea
+                            rows="10"
+                            placeholder="# 여기에 코드를 작성하세요."
+                            class="w-full px-4 py-4 bg-slate-900 font-mono text-sm text-slate-100 outline-none resize-none"
+                        ></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button"
+                                class="bg-slate-800 text-white px-6 py-3 rounded-xl text-sm font-bold opacity-60 cursor-not-allowed">
+                            구현 준비 중
+                        </button>
+                    </div>
                 </div>
-                {% endfor %}
+            </section>
+
+        <section class="bg-white p-8 rounded-2xl border border-emerald-100 shadow-sm">
+            <h3 class="text-emerald-600 font-bold mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>제출하기</span>
+            </h3>
+
+            
+
+            <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="flex flex-col sm:flex-row gap-4">                {% csrf_token %}
+                <input type="hidden" name="action" value="submit_flag">
+                    <input type="text" name="flag" placeholder="정답을 입력해주세요" required
+                        class="flex-grow pl-4 pr-4 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 outline-none transition text-sm">
+                    <button type="submit"
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-sm font-bold transition whitespace-nowrap sm:min-w-[140px]">
+                        제출하기
+                    </button>        
+                </form>
+        </section>
+
+        <section class="space-y-6 pt-4">
+            <div class="flex items-end justify-between">
+                <h2 class="text-2xl font-black text-slate-800">댓글</h2>
+                <span class="text-sm font-medium text-slate-400">{{ comments|length }}개</span>
+            </div>
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_comment">
+
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-black text-slate-800">댓글 작성</h3>
+                        <span class="text-xs text-slate-400">의견을 남겨보세요</span>
+                    </div>
+
+                    <textarea name="content"
+                            rows="4"
+                            placeholder="댓글을 입력하세요."
+                            class="w-full px-4 py-4 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500"></textarea>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold transition">
+                            댓글 등록
+                        </button>
+                    </div>
+                </form>          
+            {% else %}
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500">
+                댓글을 작성하려면 로그인해야 합니다.
             </div>
             {% endif %}
 
-            <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="flex gap-4">
-                {% csrf_token %}
-                <input type="text" name="flag" placeholder="플래그 형식을 참고하여 정답을 입력해주세요" required
-                       class="flex-grow pl-4 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition text-sm">
-                <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-8 py-3 rounded-xl text-sm font-bold transition whitespace-nowrap">
-                    제출하기
-                </button>
-            </form>
-        </section>
-
-        <section class="space-y-4 pt-4">
-            <h2 class="text-2xl font-black text-slate-800">댓글</h2>
-            
             <div class="space-y-6">
                 {% for comment in comments %}
-                <div class="border-b border-slate-100 pb-4">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <div class="w-6 h-6 rounded-full bg-slate-200"></div>
-                        <span class="font-bold text-sm text-slate-700">{{ comment.author.username }}</span>
-                        <span class="text-xs text-slate-400">{{ comment.created_at|date:"Y.m.d. H:i" }}</span>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between gap-4 mb-3">
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ comment.author.get_picture }}" alt="{{ comment.author.username }}"
+                                class="w-10 h-10 rounded-full object-cover border border-slate-200">
+
+                            <div>
+                                <p class="font-bold text-sm text-slate-700">{{ comment.author.username }}</p>
+                                <p class="text-xs text-slate-400">{{ comment.created_at|date:"Y.m.d. H:i" }}</p>
+                            </div>
+                        </div>
+
+                        {% if user == comment.author or user.is_staff and not comment.author.is_staff %}
+                        <div class="flex items-center gap-2">
+                            {% if user == comment.author %}
+                            <button type="button"
+                                    class="text-xs font-bold text-emerald-700 border border-emerald-200 bg-emerald-50 px-3 py-1 rounded-lg hover:bg-emerald-100 transition"
+                                    onclick="toggleEditComment({{ comment.id }})">
+                                수정
+                            </button>
+                            {% endif %}
+
+                            <form method="POST" action="{% url 'problem_detail' problem.pk %}" onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_comment">
+                                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                <button type="submit" class="text-xs font-bold text-rose-700 border border-rose-200 bg-rose-50 px-3 py-1 rounded-lg hover:bg-rose-100 transition">
+                                    삭제
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
                     </div>
-                    <p class="text-sm text-slate-600">{{ comment.content }}</p>
+
+                    <p class="text-sm leading-7 text-slate-600 whitespace-pre-wrap">{{ comment.content }}</p>
+
+                    {% if user == comment.author %}
+                    <form id="edit-comment-{{ comment.id }}"
+                          method="POST"
+                          action="{% url 'problem_detail' problem.pk %}"
+                          class="hidden mt-4 space-y-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="edit_comment">
+                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                                <textarea name="content" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">{{ comment.content }}</textarea>
+                        <div class="flex justify-end gap-2">
+                                                        <button type="button" onclick="toggleEditComment({{ comment.id }})" class="px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition">취소</button>
+                                                        <button type="submit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition">저장</button>
+                        </div>
+                    </form>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <p class="text-sm text-slate-400">아직 등록된 댓글이 없습니다.</p>
@@ -82,20 +226,21 @@
         </section>
     </div>
 
-    <aside class="w-full lg:w-1/3 space-y-6">
-        
+    <aside class="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-24 lg:self-start">
+
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <div class="flex items-center space-x-2 mb-4">
                 <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">{{ problem.difficulty }}</span>
-                <span class="text-indigo-500 font-bold text-sm">LEVEL {{ problem.difficulty }}</span>
+                <span class="text-emerald-600 font-bold text-sm">LEVEL {{ problem.difficulty }}</span>
             </div>
-            
+
             <h1 class="text-2xl font-black text-slate-800 mb-4">{{ problem.title }}</h1>
-            
-            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">{{ problem.category.title }}</span>
-            
+
+            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-black uppercase">
+                {% if problem.category %}{{ problem.category.title }}{% else %}미분류{% endif %}
+            </span>
+
             <div class="mt-6 flex items-center text-xs text-slate-400 space-x-4">
-                <span class="flex items-center space-x-1"><i class="fa-regular fa-eye"></i> <span>124</span></span>
                 <span class="flex items-center space-x-1"><i class="fa-regular fa-flag"></i> <span>{{ solvers_count }}</span></span>
                 <span class="flex items-center space-x-1"><i class="fa-regular fa-calendar"></i> <span>{{ problem.created_at|date:"Y.m.d. H:i:s" }}</span></span>
             </div>
@@ -104,25 +249,46 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <h3 class="text-sm font-bold text-slate-800 mb-4">출제자 정보</h3>
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden"></div>
+                <img src="{{ problem.author.get_picture }}"
+                     alt="{{ problem.author.username }}"
+                     class="w-12 h-12 rounded-full object-cover border border-slate-200">
+
                 <div>
-                    <p class="font-bold text-sm text-slate-700">{{ problem.author.username }}</p>
-                    <p class="text-xs text-slate-400">아직 자기소개가 없습니다.</p>
+                    <div class="flex items-center gap-2">
+                        <p class="font-bold text-sm text-slate-700">{{ problem.author.username }}</p>
+                        {% if problem.author.is_staff %}
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">ADMIN</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-xs text-slate-400">
+                        {% if problem.author.student and problem.author.student.bio %}
+                            {{ problem.author.student.bio }}
+                        {% else %}
+                            아직 자기소개가 없습니다.
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h3 class="text-sm font-bold text-red-500 mb-4 flex items-center space-x-2">
-                <i class="fa-regular fa-flag"></i>
+            <h3 class="text-sm font-bold text-rose-500 mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-bolt"></i>
                 <span>First Blood!</span>
             </h3>
+
             {% if first_blood %}
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden"></div>
+                <img src="{{ first_blood.user.get_picture }}"
+                     alt="{{ first_blood.user.username }}"
+                     class="w-12 h-12 rounded-full object-cover border border-slate-200">
+
                 <div>
                     <p class="font-bold text-sm text-slate-700">{{ first_blood.user.username }}</p>
-                    <p class="text-xs text-slate-400">가장 먼저 문제를 해결했습니다!</p>
+                    <p class="text-xs text-slate-400">
+                        {{ first_blood.solved_at|date:"Y.m.d. H:i" }}에 가장 먼저 해결했습니다.
+                    </p>
                 </div>
             </div>
             {% else %}
@@ -132,13 +298,18 @@
 
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-sm font-bold text-slate-800">최근 풀이자 <span class="text-indigo-500">{{ solvers_count }}</span></h3>
+                <h3 class="text-sm font-bold text-slate-800">
+                    최근 풀이자 <span class="text-emerald-600">{{ solvers_count }}</span>
+                </h3>
             </div>
-            <div class="space-y-4">
+
+            <div class="space-y-5">
                 {% for record in recent_solvers %}
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+                        <img src="{{ record.user.get_picture }}"
+                             alt="{{ record.user.username }}"
+                             class="w-8 h-8 rounded-full object-cover border border-slate-200">
                         <span class="text-sm font-bold text-slate-700">{{ record.user.username }}</span>
                     </div>
                     <span class="text-xs text-slate-400">{{ record.solved_at|timesince }} 전</span>
@@ -151,4 +322,33 @@
 
     </aside>
 </div>
+
+<script>
+function toggleEditComment(commentId) {
+    const form = document.getElementById(`edit-comment-${commentId}`);
+    if (!form) {
+        return;
+    }
+    form.classList.toggle('hidden');
+}
+
+const toggleDescriptionBtn = document.getElementById('toggle-description-btn');
+const cancelDescriptionBtn = document.getElementById('cancel-description-btn');
+const descriptionView = document.getElementById('description-view');
+const descriptionForm = document.getElementById('description-form');
+
+if (toggleDescriptionBtn && cancelDescriptionBtn && descriptionView && descriptionForm) {
+    toggleDescriptionBtn.addEventListener('click', function () {
+        descriptionView.classList.add('hidden');
+        descriptionForm.classList.remove('hidden');
+        toggleDescriptionBtn.classList.add('hidden');
+    });
+
+    cancelDescriptionBtn.addEventListener('click', function () {
+        descriptionForm.classList.add('hidden');
+        descriptionView.classList.remove('hidden');
+        toggleDescriptionBtn.classList.remove('hidden');
+    });
+}
+</script>
 {% endblock %}

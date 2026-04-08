@@ -28,6 +28,7 @@ class Course(models.Model):
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, verbose_name="소속 트랙")
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name="담당 강사/운영진")
     thumbnail = models.ImageField(upload_to='course_thumbnails/', null=True, blank=True, verbose_name="강의 썸네일")
+    enrollment_deadline = models.DateField(null=True, blank=True, verbose_name="수강 기한")
 
     def __str__(self):
         return f"[{self.category.title}] {self.title}"
@@ -48,8 +49,16 @@ class Upload(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     file = models.FileField(
         upload_to="course_files/",
-        help_text="허용 확장자: pdf, docx, xls, ppt, zip, rar, 7zip 등",
-        validators=[FileExtensionValidator(["pdf", "docx", "doc", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7zip"])]
+        help_text="허용 확장자: pdf, docx, xls, ppt, zip, rar, 7zip, jpg, png, webp, txt 등",
+        validators=[
+            FileExtensionValidator(
+                [
+                    "pdf", "docx", "doc", "xls", "xlsx", "ppt", "pptx",
+                    "zip", "rar", "7zip", "txt", "csv", "md",
+                    "jpg", "jpeg", "png", "gif", "webp",
+                ]
+            )
+        ]
     )
     upload_time = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -133,4 +142,21 @@ class Lesson(models.Model):
     def get_absolute_url(self):
         # 🚨 self.unit.course.slug 대신 self.course.slug 로 단축
         return reverse("lesson_detail", kwargs={"course_slug": self.course.slug, "lesson_pk": self.pk})
+
+
+class CourseComment(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="comments",
+    )
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField(verbose_name="댓글 내용")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.author} - {self.course}"
 

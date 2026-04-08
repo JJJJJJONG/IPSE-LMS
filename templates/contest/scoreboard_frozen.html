@@ -1,17 +1,45 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스코어보드 동결</title>
-</head>
-<body>
-    <h1>{{ contest.title }}</h1>
-    <p>현재 스코어보드는 동결되었습니다.</p>
-    <p>대회 종료 후 다시 확인할 수 있습니다.</p>
+{% extends "base.html" %}
+{% block title %}스코어보드 동결{% endblock %}
 
-    <p>
-        <a href="{% url 'contest:detail' contest.pk %}">대회 상세로 돌아가기</a>
-    </p>
-</body>
-</html>
+{% block content %}
+<section class="max-w-4xl mx-auto px-6 py-16">
+    <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-10 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border bg-amber-50 text-amber-700 border-amber-100">
+                동결 중
+            </span>
+            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border bg-slate-100 text-slate-700 border-slate-200">
+                스코어 숨김
+            </span>
+        </div>
+
+        <h1 class="text-4xl font-semibold text-[#3a3a3a] tracking-tight mb-4">
+            {{ contest.title }}
+        </h1>
+
+        <p class="text-slate-500 leading-8 mb-8">
+            현재 스코어보드는 동결되어 순위 변동이 공개되지 않습니다.
+            대회 종료 후 최종 결과를 확인할 수 있습니다.
+        </p>
+
+        <div class="rounded-md border border-slate-200 bg-slate-50 p-5 mb-8">
+            <p class="text-sm font-medium text-slate-400 mb-2">안내</p>
+            <p class="text-lg font-semibold text-[#3F3F3F]">대회 종료 이후 자동 공개</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <a href="{% url 'contest:detail' contest.pk %}"
+               class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                대회 상세로 돌아가기
+            </a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'contest:my_submissions' contest.pk %}"
+                   class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    내 제출 보기
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

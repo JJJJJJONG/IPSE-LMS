@@ -4,87 +4,82 @@
 
 {% block content %}
 
+<section class="max-w-7xl mx-auto px-6 py-10 space-y-8">
+    <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+                <p class="text-sm font-medium text-slate-400 mb-3">
+                    <a href="/" class="hover:text-emerald-700 transition">{% trans 'Home' %}</a>
+                    <span class="mx-2">/</span>
+                    <span>{% trans 'Students' %}</span>
+                </p>
+                <h1 class="text-4xl font-semibold text-[#3F3F3F]">{% trans 'Students' %}</h1>
+            </div>
+            {% if request.user.is_superuser %}
+            <div class="flex flex-wrap gap-3">
+                <a class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition" href="{% url 'add_student' %}">
+                    <i class="fas fa-plus mr-2"></i>{% trans 'Add Student' %}
+                </a>
+                <a class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition" target="_blank" href="{% url 'student_list_pdf' %}">
+                    <i class="fas fa-download mr-2"></i>{% trans 'Download pdf' %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{% trans 'Students' %}</li>
-    </ol>
-</nav>
+    {% include 'snippets/messages.html' %}
 
-<!-- <div id="input-nav"><a href="{% url 'home' %}" class="primary1">Home</a> Students</div> -->
+    <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+        {% include 'snippets/filter_form.html' %}
+    </div>
 
-{% if request.user.is_superuser %}
-<div class="manage-wrap">
-    <a class="btn btn-sm btn-primary" href="{% url 'add_student' %}"><i class="fas fa-plus"></i>{% trans 'Add Student' %}</a>
-    <a class="btn btn-sm btn-primary" target="_blank" href="{% url 'student_list_pdf' %}"><i class="fas fa-download"></i>{% trans 'Download pdf' %}</a> <!--new-->
-</div>
-{% endif %}
-
-<div class="title-1"><i class="fas fa-user-graduate"></i>{% trans 'Students' %}</div>
-<br>
-<br>
-
-{% include 'snippets/messages.html' %}
-{% include 'snippets/filter_form.html' %}
-
-<div class="table-responsive table-shadow table-light table-striped m-0 mt-4">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>{% trans 'ID No.' %} </th>
-                <th> {% trans 'Full Name' %} </th>
-                <th> {% trans 'Email' %} </th>
-                <th> {% trans 'Program' %} </th>
-                {% if request.user.is_superuser %}
-                <th> {% trans 'Action' %} </th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in filter.qs %}
-            <tr>
-                <td> {{ forloop.counter }}.</td>
-                <td>{{ student.student.username }} </td>
-                <td><a href="{% url 'profile_single' student.student.id %}">{{ student.student.get_full_name }}</a></td>
-                <td>{{ student.student.email }} </td>
-                <td>{{ student.program }}</td>
-
-                {% if request.user.is_superuser %}
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-ellipsis-vertical"></i>
-                        </button>
-                        <ul class="dropdown-menu position-fixed">
-                          <li><a class="dropdown-item" href="{% url 'student_edit' student.student.pk %}"><i class="fas fa-edit"></i>{% trans 'Update' %}</a></li>
-                          <li><a class="dropdown-item" target="_blank" href="{% url 'profile_single' student.student.id %}?download_pdf=1"><i class="fas fa-download"></i>{% trans 'Download PDF' %}</a></li>
-                          <li><a class="dropdown-item text-danger" href="{% url 'student_delete' student.pk %}"><i class="fas fa-trash-alt"></i>{% trans 'Delete' %}</a></li>
-                        </ul>
-                      </div>
-                </td>
-                {% endif %}
-                
+    <div class="bg-white border border-slate-200 rounded-md p-0 shadow-sm overflow-x-auto">
+        <table class="min-w-full border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200">
+                <tr class="text-sm font-medium text-slate-500">
+                    <th class="px-6 py-4 text-left">#</th>
+                    <th class="px-6 py-4 text-left">{% trans 'ID No.' %}</th>
+                    <th class="px-6 py-4 text-left">{% trans 'Full Name' %}</th>
+                    <th class="px-6 py-4 text-left">{% trans 'Email' %}</th>
+                    <th class="px-6 py-4 text-left">{% trans 'Program' %}</th>
+                    {% if request.user.is_superuser %}
+                    <th class="px-6 py-4 text-left">{% trans 'Action' %}</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in filter.qs %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td class="px-6 py-4">{{ forloop.counter }}.</td>
+                    <td class="px-6 py-4 font-semibold text-[#3F3F3F]">{{ student.student.username }}</td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'profile_single' student.student.id %}" class="font-semibold text-emerald-700 hover:text-emerald-800 transition">{{ student.student.get_full_name }}</a>
+                    </td>
+                    <td class="px-6 py-4">{{ student.student.email }}</td>
+                    <td class="px-6 py-4">{{ student.program }}</td>
+                    {% if request.user.is_superuser %}
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-2">
+                            <a class="px-3 py-2 rounded-md bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition" href="{% url 'student_edit' student.student.pk %}">{% trans 'Update' %}</a>
+                            <a class="px-3 py-2 rounded-md bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition" target="_blank" href="{% url 'profile_single' student.student.id %}?download_pdf=1">{% trans 'Download PDF' %}</a>
+                            <a class="px-3 py-2 rounded-md bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition" href="{% url 'student_delete' student.pk %}">{% trans 'Delete' %}</a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="6">
-                  <span class="text-danger">
-                    {% trans 'No Student.' %}
-                    {% if request.user.is_superuser %}
-                    <a href="{% url 'add_student' %}">
-                    <i class="primary" style="font-size: 22px;">
-                        {% trans 'Add Student Now.' %}
-                    </i>
-                    {% endif %}
-                    </a>
-                  </span>
-                </td>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-500 font-semibold">
+                        {% trans 'No Student.' %}
+                        {% if request.user.is_superuser %}
+                        <a href="{% url 'add_student' %}" class="ml-2 text-emerald-700 hover:text-emerald-800 transition">{% trans 'Add Student Now.' %}</a>
+                        {% endif %}
+                    </td>
                 </tr>
-
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock content %}

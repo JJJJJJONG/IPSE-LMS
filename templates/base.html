@@ -1,16 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
+    <style>
+    html {
+        font-size: 90%; 
+    }
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPSE AI Academy - {% block title %}{% endblock %}</title>
+    <title>IPSE | {% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon-ipse.svg' %}">
+    <link rel="alternate icon" type="image/png" href="{% static 'img/IPSE-LOGO.png' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="bg-slate-50 text-[#3a3a3a] min-h-screen flex flex-col">
-    {% load static %} {% block navbar %}
+<body class="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-[#3a3a3a] min-h-screen flex flex-col">
+    {% block navbar %}
     <nav class="bg-white/70 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-stretch">
 
@@ -24,32 +32,43 @@
 
                 <div class="hidden md:flex h-full items-end gap-8 text-base font-medium text-slate-700">
                     <a href="{% url 'course_list' %}"
-                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
                         학습
                     </a>
                     <a href="{% url 'problem_list' %}"
-                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
                         문제
                     </a>
                     <a href="{% url 'contest:list' %}"
-                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
                         대회
                     </a>
                     <a href="{% url 'community_main' %}"
-                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-slate-800 hover:text-[#3a3a3a] transition">
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
                         커뮤니티
+                    </a>
+                    <a href="{% url 'ranking:home' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
+                        랭킹
                     </a>
                 </div>
             </div>
 
             <div class="flex items-center space-x-4">
+                <div class="hidden lg:flex h-full items-end gap-4 text-base font-medium text-slate-700">
+                    <a href="{% url 'introduce' %}"
+                       class="h-full flex items-end pb-[18px] border-b-2 border-transparent hover:border-emerald-600 hover:text-emerald-700 transition">
+                        소개
+                    </a>
+                    <span class="self-center text-slate-300 text-[22px] leading-none -translate-y-[1px]">|</span>
+                </div>
                 {% if user.is_authenticated %}
                 <div class="flex items-center space-x-2 bg-slate-50 px-2 py-1.5 rounded-full border border-slate-200 hover:bg-slate-100 transition duration-200">
                     <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-[10px] text-white font-medium shadow-sm">
-                        LV.1
+                        LV.{{ user.student.level|default:"1" }}
                     </div>
                     <a href="/" class="px-2 text-sm font-medium text-slate-700 hover:text-emerald-600 transition">
-                        {{ user.username }}님
+                        {{ user.display_name }}님
                     </a>
                 </div>
 
@@ -61,7 +80,7 @@
                 </form>
                 {% else %}
                 <a href="{% url 'login' %}"
-                   class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">로그인</a>
+                         class="bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition">로그인</a>
                 {% endif %}
             </div>
         </div>
@@ -72,7 +91,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-400 text-xs">
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-500 text-xs">
         &copy; 2026 IPSE Club. Intelligent Pioneer of Software Engineering.
     </footer>
     {% block extra_js %}{% endblock %}

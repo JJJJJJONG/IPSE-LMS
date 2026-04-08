@@ -11,7 +11,12 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 # .env에서 ALLOWED_HOSTS를 콤마(,) 단위로 읽어오도록 개선 (보안 및 유연성 향상)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost", cast=Csv())
+# config/settings.py 파일 내부
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS", 
+    default="127.0.0.1,localhost,203.255.81.2,cbnu-ipse.co.kr,www.cbnu-ipse.co.kr", 
+    cast=Csv()
+)
 
 # change the default user models to our custom model
 AUTH_USER_MODEL = "accounts.User"
@@ -40,6 +45,7 @@ PROJECT_APPS = [
     "contest.apps.ContestConfig",
     "problems.apps.ProblemsConfig",
     "community.apps.CommunityConfig",
+    "ranking.apps.RankingConfig",
 ]
 
 # Combine all apps
@@ -111,12 +117,17 @@ EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.smtp.
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_FROM_ADDRESS = config("EMAIL_FROM_ADDRESS", default="noreply@ipse.ac.kr")
-EMAIL_USE_SSL = False
+EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", default=30, cast=int)
+DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS
+SERVER_EMAIL = EMAIL_FROM_ADDRESS
 
-LOGIN_REDIRECT_URL = "/"
+PASSWORD_RESET_TIMEOUT = config("PASSWORD_RESET_TIMEOUT", default=86400, cast=int)
+
+LOGIN_REDIRECT_URL = "/introduce/"
 LOGOUT_REDIRECT_URL = "/"
 
 REST_FRAMEWORK = {

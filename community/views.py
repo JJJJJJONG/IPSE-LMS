@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
-from .models import NewsAndEvents
+from django.contrib import messages
+from .models import NewsAndEvents, NewsAndEventsComment
 
 
 @login_required
@@ -60,18 +61,110 @@ def edit_post(request, post_id):
 @login_required
 def notice_detail(request, notice_id):
     """공지사항 상세 페이지 뷰"""
-    # URL로 전달받은 ID값으로 특정 공지사항 데이터를 찾아옴 (없으면 404 에러)
     notice = get_object_or_404(NewsAndEvents, id=notice_id)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "add_comment":
+            content = request.POST.get("content", "").strip()
+            if not content:
+                messages.error(request, "댓글 내용을 입력해주세요.")
+                return redirect("notice_detail", notice_id=notice.id)
+
+            NewsAndEventsComment.objects.create(post=notice, author=request.user, content=content)
+            return redirect("notice_detail", notice_id=notice.id)
+
+        if action in {"edit_comment", "delete_comment"}:
+            comment_id = request.POST.get("comment_id")
+            comment = get_object_or_404(NewsAndEventsComment, id=comment_id, post=notice)
+
+            can_edit = request.user == comment.author
+            can_delete = request.user == comment.author or (
+                request.user.is_staff and not comment.author.is_staff
+            )
+
+            if action == "edit_comment":
+                if not can_edit:
+                    messages.error(request, "댓글 수정 권한이 없습니다.")
+                    return redirect("notice_detail", notice_id=notice.id)
+
+                new_content = request.POST.get("content", "").strip()
+                if not new_content:
+                    messages.error(request, "댓글 내용을 입력해주세요.")
+                    return redirect("notice_detail", notice_id=notice.id)
+
+                comment.content = new_content
+                comment.save(update_fields=["content"])
+                return redirect("notice_detail", notice_id=notice.id)
+
+            if not can_delete:
+                messages.error(request, "댓글 삭제 권한이 없습니다.")
+                return redirect("notice_detail", notice_id=notice.id)
+
+            comment.delete()
+            return redirect("notice_detail", notice_id=notice.id)
     
     context = {
-        'notice': notice
+        'notice': notice,
+        'comments': notice.comments.select_related('author').all(),
     }
     return render(request, 'community/notice_detail.html', context)
 
 @login_required
 def activity_detail(request, activity_id):
     activity = get_object_or_404(NewsAndEvents, id=activity_id)
-    return render(request, 'community/activity_detail.html', {'activity': activity})
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "add_comment":
+            content = request.POST.get("content", "").strip()
+            if not content:
+                messages.error(request, "댓글 내용을 입력해주세요.")
+                return redirect("activity_detail", activity_id=activity.id)
+
+            NewsAndEventsComment.objects.create(post=activity, author=request.user, content=content)
+            return redirect("activity_detail", activity_id=activity.id)
+
+        if action in {"edit_comment", "delete_comment"}:
+            comment_id = request.POST.get("comment_id")
+            comment = get_object_or_404(NewsAndEventsComment, id=comment_id, post=activity)
+
+            can_edit = request.user == comment.author
+            can_delete = request.user == comment.author or (
+                request.user.is_staff and not comment.author.is_staff
+            )
+
+            if action == "edit_comment":
+                if not can_edit:
+                    messages.error(request, "댓글 수정 권한이 없습니다.")
+                    return redirect("activity_detail", activity_id=activity.id)
+
+                new_content = request.POST.get("content", "").strip()
+                if not new_content:
+                    messages.error(request, "댓글 내용을 입력해주세요.")
+                    return redirect("activity_detail", activity_id=activity.id)
+
+                comment.content = new_content
+                comment.save(update_fields=["content"])
+                return redirect("activity_detail", activity_id=activity.id)
+
+            if not can_delete:
+                messages.error(request, "댓글 삭제 권한이 없습니다.")
+                return redirect("activity_detail", activity_id=activity.id)
+
+            comment.delete()
+            return redirect("activity_detail", activity_id=activity.id)
+
+    return render(
+        request,
+        'community/activity_detail.html',
+        {
+            'activity': activity,
+            'comments': activity.comments.select_related('author').all(),
+        },
+    )
 
 @staff_member_required
 def upload_editor_image(request):

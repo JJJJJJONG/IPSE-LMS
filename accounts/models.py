@@ -62,6 +62,16 @@ class User(AbstractUser):
         except:
             return settings.MEDIA_URL + "default.png"
 
+    @property
+    def display_name(self):
+        """사이트 노출용 이름: 학생 닉네임 우선, 없으면 학번(username)."""
+        try:
+            if hasattr(self, "student") and self.student.nickname:
+                return self.student.nickname
+        except Student.DoesNotExist:
+            pass
+        return self.username
+
     def save(self, *args, **kwargs):
         """프로필 이미지 최적화 로직 유지"""
         super().save(*args, **kwargs)
@@ -79,6 +89,7 @@ class Student(models.Model):
     student = models.OneToOneField(User, on_delete=models.CASCADE)
     
     # 💡 프로필 커스텀을 위해 새로 추가할 필드들
+    nickname = models.CharField(max_length=30, blank=True, default="", verbose_name="닉네임")
     bio = models.CharField(max_length=100, blank=True, verbose_name="한 줄 소개")
     github_url = models.URLField(blank=True, verbose_name="GitHub 주소")
     blog_url = models.URLField(blank=True, verbose_name="블로그 주소")

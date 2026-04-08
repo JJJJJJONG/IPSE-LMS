@@ -2,14 +2,20 @@
 {% block title %}대회{% endblock %}
 
 {% block content %}
-<section class="max-w-7xl mx-auto px-6 py-10">
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-8 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-8 py-7 shadow-sm">
+        <p class="text-xs font-semibold tracking-[0.18em] text-emerald-700">CONTEST HUB</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-800">실전 감각을 키우는 IPSE 대회</h1>
+        <p class="mt-2 text-sm text-slate-500">예정, 진행, 종료 상태를 빠르게 확인하고 바로 입장할 수 있습니다.</p>
+    </div>
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8 space-y-6">
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <div class="mb-8">
-                    <h1 class="text-4xl font-semibold text-[#3a3a3a] tracking-tight mb-3">
-                        IPSE Contest
-                    </h1>
+                    <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-2">
+                        대회 찾기
+                    </h2>
+                    <p class="text-sm text-slate-500">대회명 또는 상태 필터로 원하는 대회를 바로 찾아보세요.</p>
                 </div>
 
                 <form method="get" class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-center">
@@ -20,28 +26,28 @@
                             name="q"
                             value="{{ current_q }}"
                             placeholder="대회명을 검색하세요."
-                            class="w-full h-14 pl-11 pr-4 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            class="w-full h-14 pl-11 pr-4 rounded-md border border-slate-200 bg-slate-50 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         >
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <a href="?{% if current_q %}q={{ current_q|urlencode }}{% endif %}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition {% if current_status == 'all' or not current_status %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
+                           class="px-3 py-2 rounded-md text-sm font-medium transition {% if current_status == 'all' or not current_status %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
                             전체
                         </a>
 
                         <a href="?{% if current_q %}q={{ current_q|urlencode }}&{% endif %}status=upcoming"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition {% if current_status == 'upcoming' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
+                           class="px-3 py-2 rounded-md text-sm font-medium transition {% if current_status == 'upcoming' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
                             예정
                         </a>
 
                         <a href="?{% if current_q %}q={{ current_q|urlencode }}&{% endif %}status=live"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition {% if current_status == 'live' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
+                           class="px-3 py-2 rounded-md text-sm font-medium transition {% if current_status == 'live' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
                             진행 중
                         </a>
 
                         <a href="?{% if current_q %}q={{ current_q|urlencode }}&{% endif %}status=ended"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition {% if current_status == 'ended' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
+                           class="px-3 py-2 rounded-md text-sm font-medium transition {% if current_status == 'ended' %}bg-emerald-600 text-white{% else %}border border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700{% endif %}">
                             종료
                         </a>
                     </div>
@@ -57,7 +63,7 @@
             {% if contests %}
                 <div class="space-y-4">
                     {% for contest in contests %}
-                        <div class="group bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-emerald-200 transition">
+                        <div class="group bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-emerald-200 transition">
                             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-3 mb-4">
@@ -65,7 +71,7 @@
                                             {{ forloop.counter }}
                                         </div>
 
-                                        <span class="inline-flex px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide uppercase
+                                        <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase
                                             {% if contest.computed_status == '진행 중' %}
                                                 bg-emerald-50 text-emerald-700 border border-emerald-100
                                             {% elif contest.computed_status == '동결 중' %}
@@ -89,19 +95,19 @@
                                     </p>
 
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                                            <p class="text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">Start</p>
-                                            <p class="text-sm font-medium text-[#3F3F3F]">{{ contest.start_time }}</p>
+                                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3">
+                                            <p class="text-xs font-semibold text-emerald-700 mb-1 tracking-wide">시작 시간</p>
+                                            <p class="text-sm font-semibold text-slate-700">{{ contest.start_time }}</p>
                                         </div>
 
-                                        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                                            <p class="text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">End</p>
-                                            <p class="text-sm font-medium text-[#3F3F3F]">{{ contest.end_time }}</p>
+                                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3">
+                                            <p class="text-xs font-semibold text-emerald-700 mb-1 tracking-wide">종료 시간</p>
+                                            <p class="text-sm font-semibold text-slate-700">{{ contest.end_time }}</p>
                                         </div>
 
-                                        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                                            <p class="text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">Freeze</p>
-                                            <p class="text-sm font-medium text-[#3F3F3F]">{{ contest.freeze_minutes }}분 전</p>
+                                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3">
+                                            <p class="text-xs font-semibold text-emerald-700 mb-1 tracking-wide">스코어보드 동결</p>
+                                            <p class="text-sm font-semibold text-slate-700">{{ contest.freeze_minutes }}분 전</p>
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +119,7 @@
                                             대회 보기
                                         </a>
 
-                                        <a href="{% url 'contest:scoreboard' contest.pk %}"
+                                        <a href="{% url 'ranking:home' %}?board=contest&season={{ contest.pk }}"
                                            class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                                             스코어보드
                                         </a>
@@ -124,8 +130,8 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-14 text-center shadow-sm">
-                    <div class="w-14 h-14 mx-auto rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center mb-4">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-14 text-center shadow-sm">
+                    <div class="w-14 h-14 mx-auto rounded-md bg-slate-100 text-slate-500 flex items-center justify-center mb-4">
                         <i class="fa-regular fa-folder-open text-xl"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-[#3F3F3F] mb-2">등록된 대회가 없습니다</h3>
@@ -135,7 +141,7 @@
         </div>
 
         <div class="lg:col-span-4 space-y-6">
-            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-6">
                     진행 중인 대회
                 </h2>
@@ -143,11 +149,11 @@
                 {% if live_contests %}
                     <div class="space-y-3">
                         {% for contest in live_contests %}
-                            <a href="{% url 'contest:detail' contest.pk %}"
-                               class="block rounded-lg border border-slate-200 bg-slate-50 px-4 py-4 hover:border-emerald-200 hover:bg-white transition">
+                                     <a href="{% url 'contest:detail' contest.pk %}"
+                                         class="block rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 hover:border-emerald-200 hover:bg-white transition">
                                 <div class="flex items-center justify-between gap-3 mb-2">
                                     <p class="font-semibold text-[#3a3a3a]">{{ contest.title }}</p>
-                                    <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    <span class="inline-flex px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
                                         진행 중
                                     </span>
                                 </div>
@@ -156,7 +162,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
                         현재 진행 중인 대회가 없습니다.
                     </div>
                 {% endif %}
@@ -164,13 +170,13 @@
 
             {% if live_scoreboards %}
                 {% for board in live_scoreboards %}
-                    <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-8 shadow-sm">
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
                         <div class="flex items-center justify-between mb-6">
-                            <a href="{% url 'contest:scoreboard' board.contest.pk %}"
+                            <a href="{% url 'ranking:home' %}?board=contest&season={{ board.contest.pk }}"
                                class="text-2xl font-semibold text-[#3a3a3a] tracking-tight hover:text-emerald-700 transition">
                                 {{ board.contest.title }}
                             </a>
-                            <a href="{% url 'contest:scoreboard' board.contest.pk %}"
+                            <a href="{% url 'ranking:home' %}?board=contest&season={{ board.contest.pk }}"
                                class="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700 hover:text-emerald-800 transition">
                                 Live
                             </a>
@@ -179,9 +185,9 @@
                         {% if board.rows %}
                             <div class="space-y-3">
                                 {% for row in board.rows %}
-                                    <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-4">
+                                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
                                         <div class="flex items-center gap-3 min-w-0">
-                                            <div class="w-9 h-9 rounded-lg bg-transparent text-[#2f2f2f] text-sm font-semibold flex items-center justify-center shrink-0">
+                                            <div class="w-9 h-9 rounded-md bg-transparent text-[#2f2f2f] text-sm font-semibold flex items-center justify-center shrink-0">
                                                 {{ forloop.counter }}
                                             </div>
                                             <div class="min-w-0">
@@ -198,15 +204,15 @@
                                 {% endfor %}
                             </div>
                         {% else %}
-                            <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
                                 아직 스코어보드 데이터가 없습니다.
                             </div>
                         {% endif %}
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-8 shadow-sm">
-                    <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
                         진행 중인 대회가 없어 스코어보드를 표시할 수 없습니다.
                     </div>
                 </div>

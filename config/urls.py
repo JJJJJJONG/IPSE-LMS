@@ -7,14 +7,14 @@ from django.views import defaults as default_views
 urlpatterns = [
     path("", include("core.urls")),
     path("admin/", admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("course/", include("course.urls")),
-    path("search/", include("search.urls")),
     path("quiz/", include("quiz.urls")),
     path("contest/", include("contest.urls")),
     path("problems/", include("problems.urls")),
     path("community/", include("community.urls")),
+    path("ranking/", include("ranking.urls")),
     path("accounts/api/", include("accounts.api.urls", namespace="accounts-api")),
 ]
 

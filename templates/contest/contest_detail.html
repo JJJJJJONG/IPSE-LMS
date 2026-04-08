@@ -2,14 +2,14 @@
 {% block title %}{{ contest.title }}{% endblock %}
 
 {% block content %}
-<section class="max-w-7xl mx-auto px-6 py-10">
+<section class="max-w-7xl mx-auto px-6 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8 space-y-6">
             <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
                     <div class="min-w-0">
                         <div class="flex items-center gap-3 mb-5">
-                            <span class="inline-flex px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide uppercase
+                            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase
                                 {% if contest.status_label == '진행 중' %}
                                     bg-emerald-50 text-emerald-700 border border-emerald-100
                                 {% elif contest.status_label == '동결 중' %}
@@ -24,7 +24,7 @@
                             </span>
 
                             {% if contest.can_enter %}
-                                <span class="inline-flex px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">
                                     입장 가능
                                 </span>
                             {% endif %}
@@ -40,14 +40,14 @@
                     </div>
 
                     <div class="lg:w-[240px] shrink-0">
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
                             {% if contest.can_enter %}
                                 <a href="{% url 'contest:enter' contest.pk %}"
-                                   class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                                   class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
                                     대회 입장
                                 </a>
                             {% else %}
-                                <div class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-slate-200 text-slate-500 text-sm font-semibold">
+                                <div class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-slate-200 text-slate-500 text-sm font-semibold">
                                     현재 입장 불가
                                 </div>
                             {% endif %}
@@ -57,17 +57,17 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">Start</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ contest.start_time }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">End</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ contest.end_time }}</p>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl p-5 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400 mb-2">Freeze</p>
                     <p class="text-base font-semibold text-[#3a3a3a]">{{ contest.freeze_minutes }}분 전</p>
                 </div>
@@ -85,10 +85,10 @@
                     {% if contest_problems %}
                         <div class="space-y-3">
                             {% for contest_problem in contest_problems %}
-                                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5 hover:border-emerald-200 hover:bg-white transition">
+                                <div class="rounded-xl border border-slate-200 bg-slate-50 px-5 py-5 hover:border-emerald-200 hover:bg-white transition">
                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                         <div class="flex items-center gap-4 min-w-0">
-                                            <div class="w-11 h-11 rounded-xl bg-transparent text-[#2f2f2f] flex items-center justify-center font-semibold text-sm shrink-0">
+                                            <div class="w-11 h-11 rounded-lg border border-slate-200 bg-white text-[#2f2f2f] flex items-center justify-center font-semibold text-sm shrink-0">
                                                 {{ contest_problem.label }}
                                             </div>
 
@@ -101,7 +101,7 @@
                                         </div>
 
                                         <div class="flex items-center gap-3 shrink-0">
-                                            <div class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-[#3F3F3F]">
+                                            <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-[#3F3F3F]">
                                                 {{ contest_problem.score }}점
                                             </div>
                                         </div>
@@ -110,12 +110,12 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-10 text-center text-slate-400 font-semibold">
+                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-5 py-10 text-center text-slate-400 font-semibold">
                             등록된 문제가 없습니다.
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-10 text-center text-slate-500 font-semibold">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-5 py-10 text-center text-slate-500 font-semibold">
                         대회 입장 후 문제를 볼 수 있습니다.
                     </div>
                 {% endif %}
@@ -130,32 +130,32 @@
                 </div>
 
                 <div class="space-y-3">
-                    <a href="{% url 'contest:scoreboard' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    <a href="{% url 'ranking:home' %}?board=contest&season={{ contest.pk }}"
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
                         스코어보드 보기
                     </a>
 
                     {% if user.is_authenticated %}
                         <a href="{% url 'contest:my_submissions' contest.pk %}"
-                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                             내 제출 보기
                         </a>
                     {% endif %}
 
                     {% if user.is_staff %}
                         <a href="{% url 'contest:submissions' contest.pk %}"
-                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                             전체 제출 보기
                         </a>
 
                         <a href="{% url 'contest:terminate_confirm' contest.pk %}"
-                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 transition">
+                           class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 transition">
                             대회 종료
                         </a>
                     {% endif %}
 
                     <a href="{% url 'contest:list' %}"
-                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         목록으로
                     </a>
                 </div>

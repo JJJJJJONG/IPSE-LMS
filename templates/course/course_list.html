@@ -2,44 +2,49 @@
 {% block title %}강의 목록{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-8 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-slate-50 px-8 py-7 shadow-sm">
+        <p class="text-xs font-semibold tracking-[0.18em] text-emerald-700">COURSE LIBRARY</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-800">실전형 커리큘럼으로 학습을 설계하세요</h1>
+        <p class="mt-2 text-sm text-slate-500">카테고리와 검색으로 필요한 강의를 빠르게 찾고 바로 수강할 수 있습니다.</p>
+    </div>
     <div class="flex flex-col md:flex-row gap-8">
         
         <aside class="w-full md:w-1/4">
-            <form method="GET" action="{% url 'course_list' %}" class="space-y-8 sticky top-24">
+            <form method="GET" action="{% url 'course_list' %}" class="space-y-8 sticky top-24 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                 
                 <div>
-                    <h3 class="text-lg font-black text-slate-800 mb-3">강의 검색</h3>
+                    <h3 class="text-lg font-semibold text-[#3F3F3F] mb-3">강의 검색</h3>
                     <div class="relative">
-                        <input type="text" name="q" value="{{ query }}" placeholder="강의 제목을 입력하세요" 
-                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-sm">
+                           <input type="text" name="q" value="{{ query }}" placeholder="강의 제목을 입력하세요" 
+                               class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition text-sm">
                         <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-lg font-black text-slate-800">카테고리</h3>
-                        <a href="{% url 'course_list' %}" class="text-xs text-slate-400 hover:text-blue-600 transition"><i class="fa-solid fa-rotate-right mr-1"></i>초기화</a>
+                        <h3 class="text-lg font-semibold text-[#3F3F3F]">카테고리</h3>
+                        <a href="{% url 'course_list' %}" class="text-xs text-slate-400 hover:text-emerald-700 transition"><i class="fa-solid fa-rotate-right mr-1"></i>초기화</a>
                     </div>
                     <div class="space-y-3">
                         <label class="flex items-center space-x-3 cursor-pointer group">
                             <input type="radio" name="category" value="" {% if not selected_category %}checked{% endif %} onchange="this.form.submit()"
-                                   class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                                   class="w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500">
                             <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900">전체 보기</span>
                         </label>
 
                         {% for cat in categories %}
                         <label class="flex items-center space-x-3 cursor-pointer group">
                             <input type="radio" name="category" value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}checked{% endif %} onchange="this.form.submit()"
-                                   class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                                   class="w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500">
                             <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900">{{ cat.title }}</span>
                         </label>
                         {% endfor %}
                     </div>
                 </div>
                 
-                <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 transition md:hidden">검색 적용하기</button>
+                <button type="submit" class="w-full bg-emerald-600 text-white font-semibold py-3 rounded-lg hover:bg-emerald-700 transition md:hidden">검색 적용하기</button>
             </form>
         </aside>
 
@@ -50,7 +55,7 @@
                 <div class="flex flex-col">
         
                     <a href="{{ course.get_absolute_url }}"
-                        class="relative w-full aspect-[5/3] rounded-2xl overflow-hidden block hover:opacity-85 transition-opacity border border-slate-200/80 shadow-sm"
+                        class="relative w-full aspect-[5/3] rounded-xl overflow-hidden block hover:opacity-85 transition-opacity border border-slate-200/80 shadow-sm"
                         style="background-color: #ECF7E3;">
         
                         <svg class="absolute inset-0 w-full h-full opacity-40 pointer-events-none" viewBox="0 0 400 200" preserveAspectRatio="none">
@@ -64,7 +69,7 @@
                         </svg>
         
                         <div class="absolute top-5 left-5 right-16 z-10">
-                            <span class="text-[1.35rem] font-black text-slate-800 tracking-tight leading-snug drop-shadow-sm line-clamp-2">
+                            <span class="text-[1.35rem] font-semibold text-slate-800 tracking-tight leading-snug drop-shadow-sm line-clamp-2">
                                 {{ course.title }}
                             </span>
                         </div>
@@ -104,7 +109,7 @@
                                     {{ course.instructor.username|default:"운영진" }}
                                 </span>
                             </div>
-                            <span class="text-xs font-bold text-blue-500">보유 중</span>
+                            <span class="text-xs font-semibold text-emerald-700">보유 중</span>
                         </div>
         
                     </div>
@@ -119,5 +124,5 @@
         </main>
 
     </div>
-</div>
+</section>
 {% endblock %}

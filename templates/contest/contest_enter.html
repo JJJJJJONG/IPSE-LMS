@@ -5,25 +5,25 @@
 <section class="max-w-7xl mx-auto px-6 py-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8 space-y-8">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                     <div>
                         <div class="flex items-center gap-3 mb-4">
-                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium
+                            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border
                                 {% if contest.status_label == '진행 중' %}
-                                    bg-green-100 text-green-700
+                                    bg-emerald-50 text-emerald-700 border-emerald-100
                                 {% elif contest.status_label == '동결 중' %}
-                                    bg-amber-100 text-amber-700
+                                    bg-amber-50 text-amber-700 border-amber-100
                                 {% elif contest.status_label == '예정' %}
-                                    bg-emerald-100 text-emerald-700
+                                    bg-slate-100 text-slate-700 border-slate-200
                                 {% else %}
-                                    bg-slate-100 text-slate-600
+                                    bg-slate-100 text-slate-500 border-slate-200
                                 {% endif %}
                             ">
                                 {{ contest.status_label }}
                             </span>
 
-                            <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                            <span class="inline-flex px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase border bg-emerald-50 text-emerald-700 border-emerald-100">
                                 입장 완료
                             </span>
                         </div>
@@ -38,22 +38,22 @@
                     </div>
 
                     <div class="shrink-0">
-                        <a href="{% url 'contest:scoreboard' contest.pk %}"
-                           class="inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-transparent text-[#2f2f2f] text-base font-semibold hover:bg-slate-800 transition">
+                        <a href="{% url 'ranking:home' %}?board=contest&season={{ contest.pk }}"
+                           class="inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                             스코어보드 보기
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-semibold text-[#3F3F3F]">문제 목록</h2>
                     <span class="text-sm font-medium text-slate-400">문제를 클릭하면 상세 페이지로 이동합니다.</span>
                 </div>
 
                 {% if problem_rows %}
-                    <div class="overflow-hidden rounded-2xl border border-slate-200">
+                    <div class="overflow-hidden rounded-md border border-slate-200">
                         <div class="grid grid-cols-12 px-6 py-4 text-sm font-medium text-slate-500 border-b border-slate-200 bg-slate-50">
                             <div class="col-span-2">문제 번호</div>
                             <div class="col-span-5">문제명</div>
@@ -64,7 +64,7 @@
                         {% for row in problem_rows %}
                             <div class="grid grid-cols-12 items-center px-6 py-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition">
                                 <div class="col-span-2">
-                                    <span class="inline-flex w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 font-semibold items-center justify-center">
+                                    <span class="inline-flex w-10 h-10 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100 font-semibold items-center justify-center">
                                         {{ row.contest_problem.label }}
                                     </span>
                                 </div>
@@ -84,19 +84,19 @@
 
                                 <div class="col-span-3 text-center">
                                     {% if row.status == "AC" %}
-                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
                                             AC
                                         </span>
                                     {% elif row.status == "WA" %}
-                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-rose-100 text-rose-700">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-rose-50 text-rose-700 border border-rose-100">
                                             WA
                                         </span>
                                     {% elif row.status == "PENDING" %}
-                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
                                             PENDING
                                         </span>
                                     {% else %}
-                                        <span class="inline-flex px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600">
+                                        <span class="inline-flex px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
                                             -
                                         </span>
                                     {% endif %}
@@ -105,7 +105,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-slate-400 font-semibold">
+                    <div class="rounded-md bg-slate-50 border border-slate-200 p-8 text-center text-slate-400 font-semibold">
                         등록된 문제가 없습니다.
                     </div>
                 {% endif %}
@@ -113,8 +113,8 @@
         </div>
 
         <div class="lg:col-span-4">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm sticky top-24">
-                <h2 class="text-3xl font-semibold text-[#3F3F3F] mb-8">대회 진행</h2>
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md p-8 shadow-sm sticky top-24">
+                <h2 class="text-2xl font-semibold text-[#3a3a3a] tracking-tight mb-8">대회 진행</h2>
 
                 <div class="space-y-5 text-slate-600">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -140,12 +140,12 @@
 
                 <div class="mt-8 space-y-4">
                     <a href="{% url 'contest:my_submissions' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-base font-semibold hover:bg-slate-50 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-white border border-slate-200 text-[#3F3F3F] text-sm font-semibold hover:bg-slate-100 transition">
                         내 제출 보기
                     </a>
 
                     <a href="{% url 'contest:detail' contest.pk %}"
-                       class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
+                       class="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
                         대회 상세로 돌아가기
                     </a>
                 </div>

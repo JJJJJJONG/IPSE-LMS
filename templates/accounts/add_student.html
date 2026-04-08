@@ -7,46 +7,51 @@
 
 {% block content %}
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'student_list' %}">{% trans 'Students' %}</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{% trans 'Add' %}</li>
-    </ol>
-</nav>
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="space-y-8">
+        <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+            <p class="text-sm font-medium text-slate-400 mb-3">
+                <a href="/" class="hover:text-emerald-700 transition">{% trans 'Home' %}</a>
+                <span class="mx-2">/</span>
+                <a href="{% url 'student_list' %}" class="hover:text-emerald-700 transition">{% trans 'Students' %}</a>
+                <span class="mx-2">/</span>
+                <span>{% trans 'Add' %}</span>
+            </p>
+            <h1 class="text-4xl font-semibold text-[#3F3F3F]">{% trans 'Student Add Form' %}</h1>
+            <p class="mt-3 text-slate-500">{% trans 'Create a student account and assign program information.' %}</p>
+        </div>
 
-<h4 class="mb-3 fw-bold"><i class="fas fa-user-graduate me-2"></i>{% trans 'Student Add Form' %}</h4>
+        {% include 'snippets/messages.html' %}
 
-{% include 'snippets/messages.html' %}
-
-<form action="" method="POST">{% csrf_token %}
-    <div class="row mb-3">
-       
-        <div class="col-md-6">
-            <div class="card">
-                <p class="form-title">{% trans 'Personal Info' %}</p>
-                <div class="card-body">
-                    {{ form.first_name }}
-                    {{ form.last_name }}
-                    {{ form.gender }}
-                    {{ form.email }}
-                    {{ form.address }}
-                    {{ form.phone }}
+        <form action="" method="POST" class="space-y-6">{% csrf_token %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+                    <h2 class="text-2xl font-semibold text-[#3F3F3F] mb-6">{% trans 'Personal Info' %}</h2>
+                    <div class="space-y-4">
+                        {{ form.first_name }}
+                        {{ form.last_name }}
+                        {{ form.gender }}
+                        {{ form.email }}
+                        {{ form.address }}
+                        {{ form.phone }}
+                    </div>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-md p-8 shadow-sm">
+                    <h2 class="text-2xl font-semibold text-[#3F3F3F] mb-6">{% trans 'Others' %}</h2>
+                    <div class="space-y-4">
+                        {{ form.program }}
+                        {{ form.level }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 mr-auto">
-            <div class="card">
-                <p class="form-title">{% trans 'Others' %}</p>
-                <div class="card-body">
-                    {{ form.program }}
-                    {{ form.level }}
-                </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    {% trans 'Save' %}
+                </button>
             </div>
-        </div>
+        </form>
     </div>
-
-    <input class="btn btn-primary" type="submit" value="{% trans 'Save' %}">
-</form>
+</section>
 
 {% endblock content %}

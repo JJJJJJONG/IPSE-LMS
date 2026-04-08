@@ -11,17 +11,17 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col relative">
 
-    <nav class="bg-white border-b border-slate-200 fixed top-0 w-full z-40 h-16 flex items-center justify-between px-6 shadow-sm">
+    <nav class="bg-white/95 backdrop-blur border-b border-slate-200 fixed top-0 w-full z-40 h-16 flex items-center justify-between px-6 shadow-sm">
         <button class="text-slate-500 hover:text-slate-800 text-xl"><i class="fa-solid fa-bars"></i></button>
         <div class="text-center">
             <p class="text-xs font-bold text-slate-400"><i class="fa-solid fa-book mr-1"></i>{{ course.title }}</p>
-            <h1 class="text-sm font-black text-slate-800">{{ lesson.title }} <span id="page-indicator" class="text-indigo-500 ml-1"></span></h1>
+            <h1 class="text-sm font-semibold text-slate-800">{{ lesson.title }} <span id="page-indicator" class="text-emerald-700 ml-1"></span></h1>
         </div>
         <a href="{% url 'course_detail' course.slug %}" class="text-slate-400 hover:text-slate-800 text-2xl"><i class="fa-solid fa-xmark"></i></a>
     </nav>
 
     <div class="fixed top-16 w-full h-1.5 bg-slate-200 z-30">
-        <div class="h-1.5 bg-indigo-500 transition-all duration-500" style="width: {{ progress.progress_percentage }}%;"></div>
+        <div id="top-progress-bar" data-progress="{{ progress.progress_percentage }}" class="h-1.5 bg-emerald-500 transition-all duration-500" style="width: 0%;"></div>
     </div>
 
     <main class="flex-grow pt-28 pb-32 px-4">
@@ -33,34 +33,34 @@
         </article>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 fixed bottom-0 w-full z-40 p-4">
+    <footer class="bg-white/95 backdrop-blur border-t border-slate-200 fixed bottom-0 w-full z-40 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             
-            <button id="btn-prev" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-lg transition text-sm hidden">
+            <button id="btn-prev" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg transition text-sm hidden">
                 <i class="fa-solid fa-chevron-left mr-2"></i>이전 페이지
             </button>
             <div id="prev-spacer"></div>
 
-            <button id="btn-next" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg transition text-sm shadow-md">
+            <button id="btn-next" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition text-sm">
                 다음 페이지<i class="fa-solid fa-chevron-right ml-2"></i>
             </button>
-            <button id="btn-finish" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition text-sm shadow-md hidden">
+            <button id="btn-finish" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition text-sm hidden">
                 <i class="fa-solid fa-flag-checkered mr-2"></i>학습 완료하기
             </button>
         </div>
     </footer>
 
     <div id="finishModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden text-center transform transition-all">
-            <div class="bg-indigo-50 py-8">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden text-center transform transition-all border border-slate-200">
+            <div class="bg-emerald-50 py-8">
                 <i class="fa-solid fa-trophy text-6xl text-yellow-400 drop-shadow-md"></i>
             </div>
             <div class="p-8">
-                <h3 class="text-2xl font-black text-slate-800 mb-2">축하합니다!</h3>
+                <h3 class="text-2xl font-semibold text-[#3F3F3F] mb-2">축하합니다!</h3>
                 <p class="text-slate-500 font-medium text-sm leading-relaxed mb-8">
                     이 강의의 모든 페이지를 학습하셨습니다.<br>상세 페이지로 돌아가 진도율을 확인해보세요!
                 </p>
-                <a href="{% url 'course_detail' course.slug %}" class="block w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-md">
+                <a href="{% url 'course_detail' course.slug %}" class="block w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition">
                     상세 페이지로 돌아가기
                 </a>
             </div>
@@ -87,6 +87,12 @@
         const prevSpacer = document.getElementById('prev-spacer');
         const pageIndicator = document.getElementById('page-indicator');
         const finishModal = document.getElementById('finishModal');
+        const topProgressBar = document.getElementById('top-progress-bar');
+
+        if (topProgressBar) {
+            const progress = Number(topProgressBar.dataset.progress || 0);
+            topProgressBar.style.width = `${progress}%`;
+        }
 
         // 4. 페이지 렌더링 함수
         function renderPage() {

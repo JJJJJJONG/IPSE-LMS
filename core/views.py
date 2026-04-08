@@ -6,7 +6,13 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from community.models import NewsAndEvents
-from .models import Schedule 
+from .models import ActivityLog, Schedule 
+from ranking.utils import sync_user_profile_metrics
+
+
+def introduce_view(request):
+    """소개 페이지 렌더링"""
+    return render(request, "introduce.html")
 
 
 # ########################################################
@@ -22,15 +28,17 @@ def home_view(request):
     # 2. 왼쪽 아래 달력용 데이터 (Event)
     events = NewsAndEvents.objects.filter(posted_as='Event').order_by('-upload_time')[:5]
     
-    # 3. 오른쪽 아래 활동 내역 (해당 유저의 활동만 가져오기!)
-    # 💡 복구 3: 모델을 만들기 전까지는 빈 리스트([])를 넘겨서 화면 에러를 막음. 나중에 주석만 풀면 됨!
-    # activity_logs = ActivityLog.objects.filter(user=request.user).order_by('-created_at')[:10]
-    activity_logs = []
+    # 3. 오른쪽 아래 활동 내역 (해당 유저의 활동만)
+    activity_logs = ActivityLog.objects.filter(user=request.user)[:10]
+    metrics = sync_user_profile_metrics(request.user)
 
     context = {
         'notices': notices,
         'events': events,
         'activity_logs': activity_logs,
+        'learning_level': metrics['level'],
+        'problem_points': metrics['problem_points'],
+        'contest_wins': metrics['contest_wins'],
         'title': 'IPSE AI Academy 대시보드'
     }
     return render(request, 'core/index.html', context)
