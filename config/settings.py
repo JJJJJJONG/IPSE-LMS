@@ -51,6 +51,7 @@ PROJECT_APPS = [
     "problems.apps.ProblemsConfig",
     "community.apps.CommunityConfig",
     "ranking.apps.RankingConfig",
+    "compiler.apps.CompilerConfig",
 ]
 
 # Combine all apps

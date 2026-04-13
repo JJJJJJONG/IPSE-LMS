@@ -71,47 +71,66 @@
             {% endif %}
         </section>
 
-            <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between mb-5">
-                    <div>
-                        <h2 class="text-lg font-black text-slate-800">온라인 컴파일러</h2>
-                        <p class="text-sm text-slate-400 mt-1">코드 테스트용 에디터입니다.</p>
-                    </div>
+        <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-black text-slate-800">온라인 컴파일러</h2>
+                    <p class="text-sm text-slate-400 mt-1">코드 테스트용 에디터입니다.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
+                    <select
+                        id="language-select"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500"
+                    >
+                        <option value="python">Python</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                    </select>
+
+                    <input
+                        id="stdin-input"
+                        type="text"
+                        placeholder="입력값 테스트 (선택)"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500"
+                    >
                 </div>
 
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
-                        <select class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">
-                            <option>Python</option>
-                            <option>C++</option>
-                            <option>Java</option>
-                        </select>
-
-                        <input type="text"
-                            placeholder="입력값 테스트 (선택)"
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">
+                <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-900">
+                    <div class="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+                        <span class="text-xs font-bold text-slate-300 uppercase tracking-[0.15em]">Editor</span>
+                        <span id="filename-label" class="text-xs text-slate-400">main.py</span>
                     </div>
-
-                    <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-900">
-                        <div class="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
-                            <span class="text-xs font-bold text-slate-300 uppercase tracking-[0.15em]">Editor</span>
-                            <span class="text-xs text-slate-400">main.py</span>
-                        </div>
-                        <textarea
-                            rows="10"
-                            placeholder="# 여기에 코드를 작성하세요."
-                            class="w-full px-4 py-4 bg-slate-900 font-mono text-sm text-slate-100 outline-none resize-none"
-                        ></textarea>
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button type="button"
-                                class="bg-slate-800 text-white px-6 py-3 rounded-xl text-sm font-bold opacity-60 cursor-not-allowed">
-                            구현 준비 중
-                        </button>
-                    </div>
+                    <textarea
+                        id="code-input"
+                        rows="10"
+                        class="w-full px-4 py-4 bg-slate-900 font-mono text-sm text-slate-100 outline-none resize-none"
+                    >print("hello")</textarea>
                 </div>
-            </section>
+
+                <div class="flex justify-end">
+                    <button
+                        type="button"
+                        id="run-btn"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl text-sm font-bold transition"
+                    >
+                        실행하기
+                    </button>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                    <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-[0.15em]">Output</span>
+                    </div>
+                    <pre
+                        id="output-box"
+                        class="min-h-[140px] px-4 py-4 font-mono text-sm text-slate-800 whitespace-pre-wrap"
+                    >아직 실행 결과가 없습니다.</pre>
+                </div>
+            </div>
+        </section>
 
         <section class="bg-white p-8 rounded-2xl border border-emerald-100 shadow-sm">
             <h3 class="text-emerald-600 font-bold mb-4 flex items-center space-x-2">
@@ -119,17 +138,16 @@
                 <span>제출하기</span>
             </h3>
 
-            
-
-            <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="flex flex-col sm:flex-row gap-4">                {% csrf_token %}
+            <form method="POST" action="{% url 'problem_detail' problem.pk %}" class="flex flex-col sm:flex-row gap-4">
+                {% csrf_token %}
                 <input type="hidden" name="action" value="submit_flag">
-                    <input type="text" name="flag" placeholder="정답을 입력해주세요" required
-                        class="flex-grow pl-4 pr-4 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 outline-none transition text-sm">
-                    <button type="submit"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-sm font-bold transition whitespace-nowrap sm:min-w-[140px]">
-                        제출하기
-                    </button>        
-                </form>
+                <input type="text" name="flag" placeholder="정답을 입력해주세요" required
+                    class="flex-grow pl-4 pr-4 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 outline-none transition text-sm">
+                <button type="submit"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-sm font-bold transition whitespace-nowrap sm:min-w-[140px]">
+                    제출하기
+                </button>
+            </form>
         </section>
 
         <section class="space-y-6 pt-4">
@@ -158,7 +176,7 @@
                             댓글 등록
                         </button>
                     </div>
-                </form>          
+                </form>
             {% else %}
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500">
                 댓글을 작성하려면 로그인해야 합니다.
@@ -211,10 +229,10 @@
                         {% csrf_token %}
                         <input type="hidden" name="action" value="edit_comment">
                         <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                                                <textarea name="content" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">{{ comment.content }}</textarea>
+                        <textarea name="content" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none resize-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500">{{ comment.content }}</textarea>
                         <div class="flex justify-end gap-2">
-                                                        <button type="button" onclick="toggleEditComment({{ comment.id }})" class="px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition">취소</button>
-                                                        <button type="submit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition">저장</button>
+                            <button type="button" onclick="toggleEditComment({{ comment.id }})" class="px-4 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition">취소</button>
+                            <button type="submit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition">저장</button>
                         </div>
                     </form>
                     {% endif %}
@@ -227,7 +245,6 @@
     </div>
 
     <aside class="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-24 lg:self-start">
-
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
             <div class="flex items-center space-x-2 mb-4">
                 <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">{{ problem.difficulty }}</span>
@@ -319,16 +336,13 @@
                 {% endfor %}
             </div>
         </div>
-
     </aside>
 </div>
 
 <script>
 function toggleEditComment(commentId) {
     const form = document.getElementById(`edit-comment-${commentId}`);
-    if (!form) {
-        return;
-    }
+    if (!form) return;
     form.classList.toggle('hidden');
 }
 
@@ -350,5 +364,87 @@ if (toggleDescriptionBtn && cancelDescriptionBtn && descriptionView && descripti
         toggleDescriptionBtn.classList.remove('hidden');
     });
 }
+
+function getCookie(name) {
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith(name + '='));
+    return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
+}
+
+const languageSelect = document.getElementById('language-select');
+const filenameLabel = document.getElementById('filename-label');
+const codeInput = document.getElementById('code-input');
+const stdinInput = document.getElementById('stdin-input');
+const runBtn = document.getElementById('run-btn');
+const outputBox = document.getElementById('output-box');
+
+function updateEditorTemplate() {
+    if (!languageSelect || !filenameLabel || !codeInput) return;
+
+    const lang = languageSelect.value;
+
+    if (lang === 'python') {
+        filenameLabel.textContent = 'main.py';
+        codeInput.value = 'print("hello")';
+    } else if (lang === 'c') {
+        filenameLabel.textContent = 'main.c';
+        codeInput.value = '#include <stdio.h>\\n\\nint main() {\\n    printf("hello\\\\n");\\n    return 0;\\n}';
+    } else if (lang === 'cpp') {
+        filenameLabel.textContent = 'main.cpp';
+        codeInput.value = '#include <iostream>\\nusing namespace std;\\n\\nint main() {\\n    cout << "hello" << endl;\\n    return 0;\\n}';
+    }
+}
+
+if (languageSelect) {
+    languageSelect.addEventListener('change', updateEditorTemplate);
+}
+
+
+if (runBtn) {
+    runBtn.addEventListener('click', async function () {
+        const formData = new FormData();
+        formData.append('language', languageSelect.value);
+        formData.append('code', codeInput.value);
+        formData.append('stdin', stdinInput.value);
+
+        runBtn.disabled = true;
+        runBtn.textContent = '실행 중...';
+        outputBox.textContent = '실행 중입니다...';
+
+        try {
+            const response = await fetch('/compiler/run/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: formData,
+            });
+
+            const text = await response.text();
+            let data = null;
+
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                outputBox.textContent = `응답 파싱 실패\nHTTP ${response.status}\n\n${text}`;
+                return;
+            }
+
+            if (!response.ok) {
+                outputBox.textContent = `HTTP ${response.status}\n\n${data.output || data.error || '오류가 발생했습니다.'}`;
+                return;
+            }
+
+            outputBox.textContent = data.output || '출력이 없습니다.';
+        } catch (error) {
+            outputBox.textContent = `실행 요청 실패\n\n${error}`;
+        } finally {
+            runBtn.disabled = false;
+            runBtn.textContent = '실행하기';
+        }
+    });
+}
 </script>
+
 {% endblock %}

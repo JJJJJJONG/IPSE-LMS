@@ -24,32 +24,68 @@ class StaffAddForm(UserCreationForm):
         user.email = self.cleaned_data.get("email")
         if commit:
             user.save()
+
         return user
 
 class StudentSignUpForm(UserCreationForm):
-    # 아이디(username)는 학번, nickname은 사이트 노출용 이름으로 분리
-    nickname = forms.CharField(required=True, max_length=30)
-    email = forms.EmailField(required=True)
+    username = forms.CharField(
+        required=True,
+        max_length=20,
+        label="학번",
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "학번을 입력하세요"
+        })
+    )
+    nickname = forms.CharField(
+        required=True,
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "닉네임을 입력하세요"
+        })
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "이메일을 입력하세요"
+        })
+    )
 
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "nickname", "email")
 
+    def clean_username(self):
+        student_id = self.cleaned_data.get("username", "").strip()
+
+        if not student_id.isdigit():
+            raise forms.ValidationError("학번 형식으로 입력해주세요.")
+
+        if Student.objects.filter(student_id=int(student_id)).exists():
+            raise forms.ValidationError("이미 등록된 학번입니다.")
+
+        return student_id
+
     @transaction.atomic()
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_student = True
+        user.username = self.cleaned_data.get("username", "").strip()
         user.email = self.cleaned_data.get("email")
 
         if commit:
             user.save()
             Student.objects.create(
                 student=user,
+                student_id=int(self.cleaned_data.get("username").strip()),
                 nickname=self.cleaned_data.get("nickname", "").strip(),
             )
 
         return user
-
+        
+                
 class ProfileUpdateForm(UserChangeForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     last_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))

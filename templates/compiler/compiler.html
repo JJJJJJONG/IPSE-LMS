@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}온라인 컴파일러{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-6 py-10">
+    <div class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <div class="mb-8">
+            <h1 class="text-4xl font-extrabold text-slate-900">온라인 컴파일러</h1>
+            <p class="mt-4 text-2xl font-semibold text-slate-400">코드 테스트용 에디터입니다.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-[280px_minmax(0,1fr)] mb-8">
+            <select
+                id="language-select"
+                class="h-20 rounded-3xl border-2 border-slate-200 bg-slate-50 px-8 text-2xl font-medium text-slate-700 outline-none"
+            >
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+            </select>
+
+            <input
+                id="stdin-input"
+                type="text"
+                placeholder="입력값 테스트 (선택)"
+                class="h-20 rounded-3xl border-2 border-slate-200 bg-slate-50 px-8 text-2xl font-medium text-slate-400 outline-none"
+            >
+        </div>
+
+        <div class="overflow-hidden rounded-[1.75rem] border border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between bg-slate-800 px-8 py-5">
+                <span class="text-2xl font-black tracking-[0.18em] text-slate-200">EDITOR</span>
+                <span id="filename-label" class="text-xl font-semibold text-slate-400">main.py</span>
+            </div>
+
+            <textarea
+                id="code-input"
+                spellcheck="false"
+                class="h-[420px] w-full resize-none bg-[#06153b] px-8 py-8 font-mono text-[24px] leading-[1.8] text-slate-200 outline-none"
+            >print("hello world")</textarea>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+            <button
+                id="run-btn"
+                class="rounded-3xl bg-emerald-600 px-10 py-6 text-3xl font-extrabold text-white hover:bg-emerald-700 transition"
+            >
+                실행하기
+            </button>
+        </div>
+
+        <div class="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+            <h2 class="mb-3 text-xl font-bold text-slate-800">실행 결과</h2>
+            <pre
+                id="output-box"
+                class="min-h-[180px] whitespace-pre-wrap break-words rounded-2xl bg-slate-900 p-5 text-sm text-slate-100"
+            >아직 실행 결과가 없습니다.</pre>
+        </div>
+    </div>
+</section>
+
+<script>
+function getCookie(name) {
+    const cookieValue = document.cookie
+        .split("; ")
+        .find(row => row.startsWith(name + "="));
+    return cookieValue ? decodeURIComponent(cookieValue.split("=")[1]) : null;
+}
+
+const languageSelect = document.getElementById("language-select");
+const filenameLabel = document.getElementById("filename-label");
+const codeInput = document.getElementById("code-input");
+const stdinInput = document.getElementById("stdin-input");
+const runBtn = document.getElementById("run-btn");
+const outputBox = document.getElementById("output-box");
+
+function updateEditorTemplate() {
+    const lang = languageSelect.value;
+
+    if (lang === "python") {
+        filenameLabel.textContent = "main.py";
+        codeInput.value = 'print("hello world")';
+    } else if (lang === "c") {
+        filenameLabel.textContent = "main.c";
+        codeInput.value = '#include <stdio.h>\n\nint main() {\n    printf("hello world\\n");\n    return 0;\n}';
+    } else if (lang === "cpp") {
+        filenameLabel.textContent = "main.cpp";
+        codeInput.value = '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "hello world" << endl;\n    return 0;\n}';
+    }
+}
+
+languageSelect.addEventListener("change", updateEditorTemplate);
+
+runBtn.addEventListener("click", async function () {
+    const formData = new FormData();
+    formData.append("language", languageSelect.value);
+    formData.append("code", codeInput.value);
+    formData.append("stdin", stdinInput.value);
+
+    runBtn.disabled = true;
+    runBtn.textContent = "실행 중...";
+    outputBox.textContent = "실행 중입니다...";
+
+    try {
+        const response = await fetch("/compiler/run/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+        outputBox.textContent = data.output;
+    } catch (error) {
+        outputBox.textContent = "실행 중 오류가 발생했습니다.";
+    } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = "실행하기";
+    }
+});
+</script>
+{% endblock %} 
