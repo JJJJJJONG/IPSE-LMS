@@ -72,15 +72,36 @@
         </section>
 
         <section class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h2 class="text-lg font-black text-slate-800">온라인 컴파일러</h2>
-                    <p class="text-sm text-slate-400 mt-1">코드 테스트용 에디터입니다.</p>
-                </div>
-            </div>
+                <div class="flex items-start justify-between mb-5">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-800">온라인 컴파일러</h2>
+                        <p class="text-sm text-slate-400 mt-1">코드 테스트용 에디터입니다.</p>
+                    </div>
 
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
+                    <button
+                        type="button"
+                        id="compiler-toggle-btn"
+                        class="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition"
+                        aria-label="컴파일러 접기/펼치기"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                id="compiler-toggle-path"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 15l7-7 7 7"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="compiler-body" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
                     <select
                         id="language-select"
                         class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500"
@@ -372,6 +393,10 @@ function getCookie(name) {
     return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
 }
 
+const compilerToggleBtn = document.getElementById('compiler-toggle-btn');
+const compilerTogglePath = document.getElementById('compiler-toggle-path');
+const compilerBody = document.getElementById('compiler-body');
+
 const languageSelect = document.getElementById('language-select');
 const filenameLabel = document.getElementById('filename-label');
 const codeInput = document.getElementById('code-input');
@@ -379,27 +404,63 @@ const stdinInput = document.getElementById('stdin-input');
 const runBtn = document.getElementById('run-btn');
 const outputBox = document.getElementById('output-box');
 
-function updateEditorTemplate() {
+let compilerCollapsed = false;
+
+function autoResizeCodeEditor() {
+    if (!codeInput) return;
+    codeInput.style.height = 'auto';
+    codeInput.style.height = codeInput.scrollHeight + 'px';
+}
+
+function updateEditorTemplate(resetCode = true) {
     if (!languageSelect || !filenameLabel || !codeInput) return;
 
     const lang = languageSelect.value;
 
     if (lang === 'python') {
         filenameLabel.textContent = 'main.py';
-        codeInput.value = 'print("hello")';
+        if (resetCode) {
+            codeInput.value = 'print("hello")';
+        }
     } else if (lang === 'c') {
         filenameLabel.textContent = 'main.c';
-        codeInput.value = '#include <stdio.h>\\n\\nint main() {\\n    printf("hello\\\\n");\\n    return 0;\\n}';
+        if (resetCode) {
+            codeInput.value = '#include <stdio.h>\n\nint main() {\n    printf("hello\\n");\n    return 0;\n}';
+        }
     } else if (lang === 'cpp') {
         filenameLabel.textContent = 'main.cpp';
-        codeInput.value = '#include <iostream>\\nusing namespace std;\\n\\nint main() {\\n    cout << "hello" << endl;\\n    return 0;\\n}';
+        if (resetCode) {
+            codeInput.value = '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "hello" << endl;\n    return 0;\n}';
+        }
     }
+
+    autoResizeCodeEditor();
+}
+
+if (compilerToggleBtn && compilerBody && compilerTogglePath) {
+    compilerToggleBtn.addEventListener('click', function () {
+        compilerCollapsed = !compilerCollapsed;
+
+        if (compilerCollapsed) {
+            compilerBody.classList.add('hidden');
+            compilerTogglePath.setAttribute('d', 'M19 9l-7 7-7-7');
+        } else {
+            compilerBody.classList.remove('hidden');
+            compilerTogglePath.setAttribute('d', 'M5 15l7-7 7 7');
+            autoResizeCodeEditor();
+        }
+    });
 }
 
 if (languageSelect) {
-    languageSelect.addEventListener('change', updateEditorTemplate);
+    languageSelect.addEventListener('change', function () {
+        updateEditorTemplate(true);
+    });
 }
 
+if (codeInput) {
+    codeInput.addEventListener('input', autoResizeCodeEditor);
+}
 
 if (runBtn) {
     runBtn.addEventListener('click', async function () {
@@ -445,6 +506,9 @@ if (runBtn) {
         }
     });
 }
+
+updateEditorTemplate(false);
+autoResizeCodeEditor();
 </script>
 
 {% endblock %}
