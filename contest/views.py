@@ -14,6 +14,7 @@ from .models import (
     ContestProblem,
     ContestSubmission,
     JudgeTask,
+    SubmissionTestCaseResult,
 )
 
 
@@ -404,5 +405,98 @@ def terminate_contest(request, pk):
 
     contest.end_time = timezone.now()
     contest.save(update_fields=["end_time"])
+
+
+def contest_scoreboard(request, pk):
+    contest = get_object_or_404(Contest, pk=pk, is_active=True)
+
+    contest_problems = contest.contest_problems.select_related("problem").order_by("order", "id")
+    problem_labels = [contest_problem.label for contest_problem in contest_problems]
+
+    participant_rows = ContestParticipant.objects.filter(contest=contest).select_related("user")
+    user_map = {participant.user_id: participant.user for participant in participant_rows}
+
+    submission_user_ids = ContestSubmission.objects.filter(
+        contest=contest
+    ).values_list("user_id", flat=True).distinct()
+
+    missing_user_ids = [user_id for user_id in submission_user_ids if user_id not in user_map]
+
+    if missing_user_ids:
+        User = get_user_model()
+        for user in User.objects.filter(id__in=missing_user_ids):
+            user_map[user.id] = user
+
+    users = list(user_map.values())
+
+    scoreboard_rows = []
+
+    for user in users:
+        solved_count = 0
+        penalty = 0
+        problem_results = []
+
+        for contest_problem in contest_problems:
+            submissions = ContestSubmission.objects.filter(
+                contest=contest,
+                problem=contest_problem.problem,
+                user=user,
+            ).order_by("submitted_at", "id")
+
+            ac_submission = submissions.filter(result="AC").first()
+
+            if ac_submission:
+                solved_count += 1
+
+                wrong_attempts = submissions.filter(
+                    submitted_at__lt=ac_submission.submitted_at
+                ).exclude(result="AC").count()
+
+                elapsed_minutes = int(
+                    (ac_submission.submitted_at - contest.start_time).total_seconds() // 60
+                )
+                penalty += elapsed_minutes + (wrong_attempts * 20)
+
+                if wrong_attempts > 0:
+                    display = f"AC(+{wrong_attempts})"
+                else:
+                    display = "AC"
+            else:
+                attempts = submissions.exclude(result="PENDING").count()
+
+                if attempts > 0:
+                    display = f"WA({attempts})"
+                else:
+                    display = "-"
+
+            problem_results.append(
+                {
+                    "label": contest_problem.label,
+                    "display": display,
+                }
+            )
+
+        scoreboard_rows.append(
+            {
+                "user": user,
+                "solved_count": solved_count,
+                "penalty": penalty,
+                "problem_results": problem_results,
+            }
+        )
+
+    scoreboard_rows.sort(
+        key=lambda row: (-row["solved_count"], row["penalty"], str(row["user"]))
+    )
+
+    return render(
+        request,
+        "contest/scoreboard.html",
+        {
+            "contest": contest,
+            "problem_labels": problem_labels,
+            "scoreboard_rows": scoreboard_rows,
+        },
+    )
 
     return redirect("contest:detail", pk=contest.pk)
