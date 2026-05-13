@@ -109,9 +109,17 @@
                                     {{ course.instructor.username|default:"운영진" }}
                                 </span>
                             </div>
-                            <span class="text-xs font-semibold text-emerald-700">보유 중</span>
+                            
+                                {% with progress=course.progress_percent|default:0 %}
+                                    {% if progress >= 100 %}
+                                        <span class="text-xs font-semibold text-emerald-700">학습 완료</span>
+                                    {% else %}
+                                        <span class="text-xs font-semibold text-emerald-700">보유 중</span>
+                                    {% endif %}
+                                {% endwith %}
+
+
                         </div>
-        
                     </div>
                 </div>
                 {% empty %}

@@ -16,6 +16,7 @@ urlpatterns = [
     path("community/", include("community.urls")),
     path("ranking/", include("ranking.urls")),
     path("accounts/api/", include("accounts.api.urls", namespace="accounts-api")),
+    path("compiler/", include("compiler.urls")),
 ]
 
 if settings.DEBUG:

@@ -114,7 +114,7 @@ class Quiz(models.Model):
 
     objects = QuizManager()
 
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.single_attempt is True:
             self.exam_paper = True
 
@@ -123,8 +123,9 @@ class Quiz(models.Model):
         if self.pass_mark < 0:
             raise ValidationError("%s is below 0" % self.pass_mark)
 
-        super(Quiz, self).save(force_insert, force_update, *args, **kwargs)
+        super().save(*args, **kwargs)
 
+        
     class Meta:
         verbose_name = _("Quiz")
         verbose_name_plural = _("Quizzes")

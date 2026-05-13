@@ -11,28 +11,37 @@ import textwrap
 
 @login_required
 def course_list(request):
-    # 1. 파라미터 가져오기
     query = request.GET.get('q', '')
     category_id = request.GET.get('category', '')
 
-    # 2. 기본 쿼리셋
-    courses = Course.objects.all()
+    courses = Course.objects.all().select_related('category', 'instructor')
 
-    # 3. 필터링 적용
     if query:
         courses = courses.filter(title__icontains=query)
     if category_id:
         courses = courses.filter(category_id=category_id)
 
     categories = CourseCategory.objects.all()
-    
+
+    user_progresses = UserCourseProgress.objects.filter(
+        user=request.user,
+        course__in=courses
+    ).prefetch_related('completed_lessons')
+
+    progress_map = {
+        progress.course_id: progress.progress_percentage
+        for progress in user_progresses
+    }
+
+    for course in courses:
+        course.progress_percent = progress_map.get(course.id, 0)
+
     return render(request, 'course/course_list.html', {
         'categories': categories,
         'courses': courses,
         'query': query,
         'selected_category': category_id,
     })
-
 # course/views.py 내부
 
 @login_required
