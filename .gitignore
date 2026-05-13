@@ -137,6 +137,9 @@ cython_debug/
 # macOS
 .DS_Store
 
+# Tailwind CSS build output (generated — do not commit)
+static/css/tailwind.css
+
 # Cursor  
 .cursorignore
 .cursorindexingignore
