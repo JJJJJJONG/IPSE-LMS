@@ -16,7 +16,7 @@
                 </h1>
 
                 <p class="text-lg leading-9 text-slate-600 max-w-2xl mb-10">
-                    IPSE Academy는 강의, 문제 풀이, 대회 참여를 하나의 루프로 연결해
+                    IPSE는 강의, 문제 풀이, 대회 참여를 하나의 루프로 연결해
                     학습자가 속도와 깊이를 동시에 확보할 수 있도록 설계된 실전형 학습 환경입니다.
                 </p>
 
@@ -131,7 +131,7 @@
                 단계별로 이어지는 성장 경로
             </h2>
             <p class="text-lg leading-9 text-slate-600 max-w-4xl mx-auto">
-                기초부터 심화, 실전까지 분절되지 않는 경로를 제공해
+                기초부터 심화, 실전까지 분절되지 않는 경로로
                 학습자가 현재 위치를 파악하고 다음 단계를 자연스럽게 선택할 수 있습니다.
             </p>
         </div>
@@ -160,13 +160,18 @@
             <div class="bg-white border border-emerald-100 rounded-2xl p-8 reveal-up">
                 <div class="inline-flex px-4 py-2 rounded-lg bg-emerald-200/70 text-emerald-900 text-sm font-semibold mb-6">실전 트랙</div>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 mb-4">
-                    How to drink soju like a pro
+                    Contest 
+                    
                 </div>
-                <img src="{% static 'img/soju.png' %}" alt="실전 트랙 이미지" class="w-full rounded-xl border border-slate-200 object-cover">
+                <img src="{% static 'img/IPSE-LOGO.png' %}" alt="실전 트랙 이미지" class="w-full rounded-xl border border-slate-200 object-cover">
+                
+
+
             </div>
+        
         </div>
 
-        <div class="text-center mt-10">
+        <div class="mt-10 flex justify-center">
             <a href="{% url 'course_list' %}" class="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700 transition">
                 전체 커리큘럼 보기
             </a>
@@ -211,14 +216,140 @@
     </div>
 </section>
 
+<section class="bg-white border-t border-slate-100" data-aos="fade-up">
+    <div class="max-w-7xl mx-auto px-6 py-24 lg:py-28">
+        <div class="mb-14 reveal-left">
+            <p class="text-xs font-semibold text-emerald-700 tracking-[0.18em] uppercase mb-4">Professor</p>
+            <h2 class="text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-slate-900 mb-6">
+                교수님 소개
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-12 items-start">
+            <div>
+                <button
+                    type="button"
+                    class="professor-card w-full bg-white border border-slate-200 p-5 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)]"
+                    data-key="kim-mihye"
+                    data-name="김미혜 교수"
+                    data-role="전임교수"
+                    data-education="충북대학교"
+                    data-field="유비쿼터스 게임"
+                    data-lab="44-406"
+                >
+                    <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                        <img
+                            src="{% static 'img/introduce/professor-kim-mihye.jpg' %}"
+                            alt="김미혜 교수"
+                            class="w-full h-full object-cover"
+                        >
+                    </div>
+                    <p class="text-sm font-semibold text-emerald-700 mb-1">전임교수</p>
+                    <h3 class="text-2xl font-semibold text-slate-900">김미혜</h3>
+                </button>
+            </div>
+
+            <div
+                id="professor-slide-wrap"
+                class="overflow-hidden transition-all duration-300"
+                style="max-height: 0;"
+            >
+                <div
+                    id="professor-slide-panel"
+                    class="border border-slate-200 bg-white translate-x-12 opacity-0 pointer-events-none transition-all duration-300 ease-out"
+                >
+                    <div class="px-8 py-10">
+                        <p id="professor-slide-role" class="text-sm font-semibold text-emerald-700 mb-2">전임교수</p>
+                        <h4 id="professor-slide-name" class="text-4xl font-semibold tracking-[-0.03em] text-slate-900 mb-10">김미혜 교수</h4>
+
+                        <div class="space-y-5">
+                            <div class="border border-slate-200 px-5 py-4 bg-white">
+                                <p class="text-xs font-semibold tracking-[0.16em] uppercase text-slate-400 mb-2">학력</p>
+                                <p id="professor-slide-education" class="text-lg text-slate-700">충북대학교</p>
+                            </div>
+
+                            <div class="border border-slate-200 px-5 py-4 bg-white">
+                                <p class="text-xs font-semibold tracking-[0.16em] uppercase text-slate-400 mb-2">연구분야</p>
+                                <p id="professor-slide-field" class="text-lg text-slate-700">유비쿼터스 게임</p>
+                            </div>
+
+                            <div class="border border-slate-200 px-5 py-4 bg-white">
+                                <p class="text-xs font-semibold tracking-[0.16em] uppercase text-slate-400 mb-2">연구실</p>
+                                <p id="professor-slide-lab" class="text-lg text-slate-700">44-406</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-24 mb-14 reveal-left">
+            <p class="text-xs font-semibold text-emerald-700 tracking-[0.18em] uppercase mb-4">Executive Team</p>
+            <h2 class="text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-slate-900 mb-6">
+                임원진 소개
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/yoo-hyunwoo.jpg' %}" alt="유현우" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">회장</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">유현우</h3>
+            </article>
+
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/park-jongeun.jpg' %}" alt="박종은" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">부회장</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">박종은</h3>
+            </article>
+
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/ahn-junseok.jpg' %}" alt="안준석" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">임원</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">안준석</h3>
+            </article>
+
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/kwon-oseop.jpg' %}" alt="권오섭" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">임원</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">권오섭</h3>
+            </article>
+
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/lee-hyeon.jpg' %}" alt="이현" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">임원</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">이현</h3>
+            </article>
+
+            <article class="bg-white border border-slate-200 p-5 text-center shadow-sm hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)] transition reveal-up">
+                <div class="aspect-[3/4] overflow-hidden border border-slate-200 bg-slate-50 mb-5">
+                    <img src="{% static 'img/introduce/kim-jaemin.jpg' %}" alt="김재민" class="w-full h-full object-cover">
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 mb-1">임원</p>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-2">김재민</h3>
+            </article>
+        </div>
+    </div>
+</section>
+
 <section class="bg-gradient-to-br from-emerald-600 to-emerald-700" data-aos="fade-up">
     <div class="max-w-6xl mx-auto px-6 py-24 lg:py-28 text-center">
         <h2 class="text-4xl lg:text-6xl font-semibold tracking-[-0.05em] text-white leading-tight mb-8">
-            지금 바로<br>IPSE 학습 루프를 시작해보세요
+            지금 바로<br>IPSE 학습을 시작해보세요
         </h2>
 
         <p class="text-lg lg:text-xl leading-9 text-white/90 max-w-3xl mx-auto mb-10">
-            강의로 배우고, 문제로 익히고, 대회로 증명하는 구조를 통해
+            강의로 배우고, 문제로 익히고, 대회로 증명하는 구조로
             더 선명한 성장 경험을 만들 수 있습니다.
         </p>
 
@@ -334,6 +465,75 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+const professorCards = document.querySelectorAll('.professor-card');
+const professorSlideWrap = document.getElementById('professor-slide-wrap');
+const professorSlidePanel = document.getElementById('professor-slide-panel');
+const professorSlideRole = document.getElementById('professor-slide-role');
+const professorSlideName = document.getElementById('professor-slide-name');
+const professorSlideEducation = document.getElementById('professor-slide-education');
+const professorSlideField = document.getElementById('professor-slide-field');
+const professorSlideLab = document.getElementById('professor-slide-lab');
+
+let activeProfessorKey = null;
+let professorCloseTimer = null;
+
+function setProfessorData(card) {
+    professorSlideRole.textContent = card.dataset.role;
+    professorSlideName.textContent = card.dataset.name;
+    professorSlideEducation.textContent = card.dataset.education;
+    professorSlideField.textContent = card.dataset.field;
+    professorSlideLab.textContent = card.dataset.lab;
+}
+
+function openProfessorSlide(card) {
+    if (!professorSlideWrap || !professorSlidePanel) return;
+
+    clearTimeout(professorCloseTimer);
+    setProfessorData(card);
+
+    professorSlideWrap.style.maxHeight = professorSlidePanel.scrollHeight + 'px';
+
+    requestAnimationFrame(() => {
+        professorSlidePanel.classList.remove('translate-x-12', 'opacity-0', 'pointer-events-none');
+    });
+
+    activeProfessorKey = card.dataset.key;
+}
+
+function closeProfessorSlide() {
+    if (!professorSlideWrap || !professorSlidePanel) return;
+
+    professorSlidePanel.classList.add('translate-x-12', 'opacity-0', 'pointer-events-none');
+    activeProfessorKey = null;
+
+    professorCloseTimer = setTimeout(() => {
+        professorSlideWrap.style.maxHeight = '0px';
+    }, 300);
+}
+
+professorCards.forEach((card) => {
+    card.addEventListener('click', function () {
+        if (activeProfessorKey === card.dataset.key) {
+            closeProfessorSlide();
+            return;
+        }
+        openProfessorSlide(card);
+    });
+});
+
+window.addEventListener('resize', function () {
+    if (activeProfessorKey && professorSlideWrap && professorSlidePanel) {
+        professorSlideWrap.style.maxHeight = professorSlidePanel.scrollHeight + 'px';
+    }
+});
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        closeProfessorSlide();
+    }
+});
+
 });
 </script>
 {% endblock %}

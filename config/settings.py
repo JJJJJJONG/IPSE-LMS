@@ -14,9 +14,14 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 # config/settings.py 파일 내부
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", 
-    default="127.0.0.1,localhost,203.255.81.2,cbnu-ipse.co.kr,www.cbnu-ipse.co.kr", 
+    default="cbnu-ipse.co.kr, 10.255.81.163, 127.0.0.1, localhost, 192.168.0.8, 192.168.206.128", 
     cast=Csv()
 )
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://cbnu-ipse.co.kr",
+]
+
 
 # change the default user models to our custom model
 AUTH_USER_MODEL = "accounts.User"
