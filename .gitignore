@@ -134,9 +134,15 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# macOS
+.DS_Store
+
 # Cursor  
 .cursorignore
 .cursorindexingignore
 
 # IPSE LMS Media files (유저 업로드 썸네일, 영상, 자료 등)
 media/
+
+# yhw1737 local files
+.github/instructions
