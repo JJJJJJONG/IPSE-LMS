@@ -63,7 +63,7 @@ class StudentSignUpForm(UserCreationForm):
         if not student_id.isdigit():
             raise forms.ValidationError("학번 형식으로 입력해주세요.")
 
-        if Student.objects.filter(student_id=int(student_id)).exists():
+        if Student.objects.filter(student_number=int(student_id)).exists():
             raise forms.ValidationError("이미 등록된 학번입니다.")
 
         return student_id
@@ -77,11 +77,11 @@ class StudentSignUpForm(UserCreationForm):
 
         if commit:
             user.save()
-            Student.objects.create(
-                student=user,
-                student_id=int(self.cleaned_data.get("username").strip()),
-                nickname=self.cleaned_data.get("nickname", "").strip(),
-            )
+            # post_save 시그널이 이미 빈 Student를 생성하므로, 생성 대신 업데이트
+            student = user.student
+            student.student_number = int(self.cleaned_data.get("username").strip())
+            student.nickname = self.cleaned_data.get("nickname", "").strip()
+            student.save()
 
         return user
         

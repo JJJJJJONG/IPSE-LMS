@@ -87,7 +87,8 @@ class User(AbstractUser):
 class Student(models.Model):
     """IPSE 동아리원(학생) 상세 정보 모델"""
     student = models.OneToOneField(User, on_delete=models.CASCADE)
-    
+    student_number = models.IntegerField(null=True, blank=True, unique=True, verbose_name="학번")
+
     # 💡 프로필 커스텀을 위해 새로 추가할 필드들
     nickname = models.CharField(max_length=30, blank=True, default="", verbose_name="닉네임")
     bio = models.CharField(max_length=100, blank=True, verbose_name="한 줄 소개")
