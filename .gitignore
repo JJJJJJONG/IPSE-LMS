@@ -151,3 +151,6 @@ media/
 .github/instructions
 DEV_GUIDE.md
 TODO.md
+
+# Docker environment files (secrets)
+.env.docker
