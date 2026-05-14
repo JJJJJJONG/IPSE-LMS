@@ -152,6 +152,12 @@ PASSWORD_RESET_TIMEOUT = config("PASSWORD_RESET_TIMEOUT", default=86400, cast=in
 LOGIN_REDIRECT_URL = "/introduce/"
 LOGOUT_REDIRECT_URL = "/"
 
+# 쿠키 이름을 환경별로 다르게 설정해 로컬 dev서버(localhost:8000)와
+# Docker(localhost:80)가 동일 이름의 sessionid 쿠키를 공유하지 않도록 한다.
+# .env → SESSION_COOKIE_NAME=sessionid_local
+# .env.docker → SESSION_COOKIE_NAME=sessionid (기본값 유지)
+SESSION_COOKIE_NAME = config("SESSION_COOKIE_NAME", default="sessionid")
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
