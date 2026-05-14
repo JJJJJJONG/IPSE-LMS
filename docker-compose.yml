@@ -3,14 +3,12 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
+    env_file:
+      - .env.docker
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-ipse_lms}
-      POSTGRES_USER: ${POSTGRES_USER:-ipse}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ipse} -d ${POSTGRES_DB:-ipse_lms}"]
+      test: ["CMD-SHELL", "pg_isready -U ipse -d ipse_lms"]
       interval: 10s
       timeout: 5s
       retries: 5
