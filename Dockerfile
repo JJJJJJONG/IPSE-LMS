@@ -19,8 +19,10 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements/production.txt
 
 # pytailwindcss 설치 및 CSS 빌드
+# templates/, static/ 전체 복사 후 빌드해야 Tailwind v4가 클래스 스캔 가능
 RUN pip install --no-cache-dir pytailwindcss
-COPY static/src/input.css static/src/input.css
+COPY templates/ templates/
+COPY static/ static/
 RUN tailwindcss -i static/src/input.css -o static/css/tailwind.css --minify
 
 # ==========================================
