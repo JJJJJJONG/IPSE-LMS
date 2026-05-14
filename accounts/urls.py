@@ -3,9 +3,17 @@ from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
 from . import views
 
-# 🚨 에러의 원인이었던 낡은 임포트(LecturerFilterView 등)는 완전히 삭제함!
-
 urlpatterns = [
+    path(
+        "login/",
+        views.KoreanLoginView.as_view(template_name="registration/login.html"),
+        name="login",
+    ),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(),
+        name="logout",
+    ),
     path(
         "password_reset/",
         views.UserPasswordResetView.as_view(),
