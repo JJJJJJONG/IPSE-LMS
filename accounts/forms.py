@@ -1,7 +1,14 @@
 from django import forms
 from django.db import transaction
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm, AuthenticationForm
 from .models import User, Student, GENDERS
+
+
+class KoreanAuthenticationForm(AuthenticationForm):
+    error_messages = {
+        "invalid_login": "학번 또는 비밀번호가 올바르지 않습니다.",
+        "inactive": "아직 승인되지 않은 계정입니다. 관리자 승인 후 로그인이 가능합니다.",
+    }
 
 class StaffAddForm(UserCreationForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -72,6 +79,7 @@ class StudentSignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_student = True
+        user.is_active = False  # 어드민 승인 전까지 로그인 불가
         user.username = self.cleaned_data.get("username", "").strip()
         user.email = self.cleaned_data.get("email")
 

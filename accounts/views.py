@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import StudentSignUpForm 
+from django.contrib.auth.views import LoginView
+from .forms import StudentSignUpForm, KoreanAuthenticationForm
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -12,19 +13,24 @@ from .models import Student
 from .forms import EmailValidationOnForgotPassword
 
 
+class KoreanLoginView(LoginView):
+    authentication_form = KoreanAuthenticationForm
+
+
 def register(request):
     if request.method == 'POST':
-        form = StudentSignUpForm(request.POST) 
+        form = StudentSignUpForm(request.POST)
         if form.is_valid():
-            user = form.save() 
-            messages.success(request, "환영합니다! 발급받은 계정으로 로그인해 주세요.")
-            return redirect('login') 
+            form.save()
+            messages.info(
+                request,
+                "회원가입이 완료되었습니다. 관리자 승인 후 로그인이 가능합니다."
+            )
+            return redirect('login')
         else:
-            # 🚨 터미널에 진짜 에러 원인을 출력해 보는 코드 추가!
-            print("폼 검증 실패 원인:", form.errors)
             messages.error(request, "입력하신 정보를 다시 확인해 주세요.")
     else:
-        form = StudentSignUpForm() 
+        form = StudentSignUpForm()
 
     return render(request, 'registration/register.html', {'form': form})
 

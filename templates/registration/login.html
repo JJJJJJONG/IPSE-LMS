@@ -39,6 +39,20 @@
             <h1 class="text-5xl font-black text-slate-800 mb-2">IPSE</h1>
             <p class="text-slate-500 font-medium mb-10">Intelligent Pioneer of Software Engineering</p>
 
+            {% if messages %}
+            <div class="mb-4 space-y-2">
+                {% for message in messages %}
+                <div class="flex items-center text-sm font-semibold p-4 rounded-xl border
+                    {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-700
+                    {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-500
+                    {% else %}bg-blue-50 border-blue-200 text-blue-700{% endif %}">
+                    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <form method="post" action="{% url 'login' %}" class="space-y-6">
                 {% csrf_token %}
                 
@@ -58,10 +72,16 @@
                     <a href="{% url 'password_reset' %}" class="text-sm font-medium text-emerald-700 hover:text-emerald-600 transition">비밀번호를 잊으셨나요?</a>
                 </div>
 
-                {% if form.errors %}
+                {% if form.non_field_errors %}
+                <div class="flex items-center text-sm font-bold p-4 rounded-xl border mt-2
+                    {% if '승인' in form.non_field_errors.0 %}bg-amber-50 border-amber-200 text-amber-700{% else %}bg-red-50 border-red-200 text-red-500{% endif %}">
+                    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    <span>{{ form.non_field_errors.0 }}</span>
+                </div>
+                {% elif form.errors %}
                 <div class="flex items-center text-red-500 text-sm font-bold bg-red-50 p-4 rounded-xl border border-red-200 mt-2">
                     <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                    <span>잘못된 학번이거나 비밀번호입니다. 다시 시도해 주세요.</span>
+                    <span>학번 또는 비밀번호가 올바르지 않습니다.</span>
                 </div>
                 {% endif %}
 
